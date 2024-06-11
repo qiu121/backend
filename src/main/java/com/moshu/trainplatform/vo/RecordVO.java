@@ -1,6 +1,5 @@
-package com.moshu.trainplatform.entity;
+package com.moshu.trainplatform.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,55 +7,52 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author Leo
  * @version 1.0
- * @date 2024/05/22
+ * @date 2024/06/07
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Conference implements Serializable {
+public class RecordVO implements Serializable {
 
-    private static final long serialVersionUID = 5200400106498242085L;
+    private static final long serialVersionUID = 1L;
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
-     * 会议名称
+     * 用户名
      */
-    private String name;
+    private String username;
     /**
-     * 主持人
+     * 用户id
      */
-    private String host;
+    private String userId;
     /**
-     * 会议年份
+     * 样本记录数量,使用int,默认值为0
      */
-    private int year;
+    private int count;
     /**
-     * 备注
+     * 完成状态
      */
-    private String remark;
+    private String status;
     /**
-     * 附件模块
+     * 提交时间
      */
-    @TableField(exist = false)
-    List<ModuleAttachment> moduleList;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime submitTime;
     /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createTime;
     /**
-     * 修改时间
+     * 更新时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime updateTime;
-
 
 }

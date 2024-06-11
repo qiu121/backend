@@ -4,8 +4,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.moshu.trainplatform.entity.SoilSample;
 import com.moshu.trainplatform.mapper.SoilSampleMapper;
 import com.moshu.trainplatform.service.SoilSampleService;
+import com.moshu.trainplatform.vo.SoilSampleVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author Leo
@@ -15,4 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class SoilSampleServiceImpl extends ServiceImpl<SoilSampleMapper, SoilSample> implements SoilSampleService {
+    @Resource
+    private SoilSampleMapper soilSampleMapper;
+    @Override
+    public List<SoilSampleVO> listByRecordId(Long recordId) {
+        return soilSampleMapper.listByRecordId(recordId);
+    }
 }

@@ -34,7 +34,7 @@ public class SoilSample implements Serializable {
     /**
      * 样本类型
      */
-    private String sampleType;
+    private Long sampleTypeId;
     /**
      * 记录ID
      */
@@ -51,9 +51,9 @@ public class SoilSample implements Serializable {
     private String smell;
 
     /**
-     * 生物种类(植物根系)
+     * 生物种类
      */
-    private String origanism;
+    private String organism;
 
     /**
      * 颗粒硬度

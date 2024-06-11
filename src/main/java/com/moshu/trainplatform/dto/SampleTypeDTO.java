@@ -19,6 +19,6 @@ public class SampleTypeDTO implements Serializable {
     /**
      * 样本类型名
      */
-    private String name;
+    private String sampleTypeName;
 
 }

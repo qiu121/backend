@@ -9,15 +9,16 @@ import com.moshu.trainplatform.service.RecordService;
 import com.moshu.trainplatform.service.SoilSampleService;
 import com.moshu.trainplatform.template.SuccessResponse;
 import com.moshu.trainplatform.utils.UserUtil;
+import com.moshu.trainplatform.vo.RecordVO;
 import com.moshu.trainplatform.vo.SoilSampleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Leo
@@ -33,58 +34,27 @@ public class ApiRecordController {
     private final RecordService recordService;
     private final SoilSampleService soilSampleService;
 
-    /**
-     * 查询个人
-     *
-     * @return
-     */
-    @GetMapping("/getAll")
+    @GetMapping("/listRecord")
     @RequiresRoles({"admin"})
-    public SuccessResponse getAll() {
+    public SuccessResponse list() {
         SuccessResponse response = new SuccessResponse(200);
 
-        // 返回格式转换
-        List<Record> recordList = recordService.list().stream()
-                .peek(record -> {
-                    LambdaQueryWrapper<SoilSample> wrapper = new LambdaQueryWrapper<>();
-                    wrapper.eq(SoilSample::getRecordId, record.getId());
-
-                    List<SoilSampleVO> soilSampleVOList = soilSampleService.list(wrapper).stream()
-                            .map(SoilSampleVO::new)
-                            .collect(Collectors.toList());
-                    record.setSampleList(soilSampleVOList);
-                }).collect(Collectors.toList());
-
-
-        response.put("result", recordList);
+        List<RecordVO> list = recordService.listRecord();
+        response.put("result", list);
         return response;
     }
 
-    @GetMapping("/get")
-    @RequiresRoles({"user"})
+    @GetMapping("/listRecordByUserId")
+    @RequiresRoles(value = {"user", "admin"}, logical = Logical.OR)
     public SuccessResponse get() {
 
         // 条件查询出访问用户的记录
         UserInfo user = UserUtil.getUserInfoByToken();
-        String userName = user.getUserName();
-        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Record::getUsername, userName);
-        List<Record> list = recordService.list(queryWrapper);
+        String userId = user.getUserId();
 
-        List<Record> recordList = list.stream()
-                .peek(record -> {
-                    LambdaQueryWrapper<SoilSample> wrapper = new LambdaQueryWrapper<>();
-                    wrapper.eq(SoilSample::getRecordId, record.getId());
-
-                    List<SoilSampleVO> soilSampleVOList = soilSampleService.list(wrapper).stream()
-                            .map(SoilSampleVO::new)
-                            .collect(Collectors.toList());
-                    record.setSampleList(soilSampleVOList);
-                }).collect(Collectors.toList());
-
-
+        List<RecordVO> list = recordService.listRecordByUserId(userId);
         SuccessResponse response = new SuccessResponse(200);
-        response.put("result", recordList);
+        response.put("result", list);
         return response;
     }
 
@@ -161,7 +131,7 @@ public class ApiRecordController {
         record.setId(recordDTO.getId());
         record.setUpdateTime(LocalDateTime.now());
 
-        log.error("dddddddddddd{}",record);
+        log.error("dddddddddddd{}", record);
         recordService.updateById(record);
 
         List<SoilSampleVO> sampleList = recordDTO.getSampleList();

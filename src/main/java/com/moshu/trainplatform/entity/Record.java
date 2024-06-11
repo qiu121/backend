@@ -43,10 +43,24 @@ public class Record implements Serializable {
      */
     private String status;
     /**
+     * 实验记录名称
+     */
+    private String recordName;
+    /**
+     * 用户下的实验样本数量
+     */
+    @TableField(exist = false)
+    private Integer count;
+    /**
      * 样本集
      */
     @TableField(exist = false)
     List<SoilSampleVO> sampleList;
+    /**
+     * 提交时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime submitTime;
     /**
      * 创建时间
      */

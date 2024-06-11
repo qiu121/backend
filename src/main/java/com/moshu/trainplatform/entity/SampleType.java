@@ -32,7 +32,7 @@ public class SampleType implements Serializable {
     /**
      * 类型名
      */
-    private String name;
+    private String sampleTypeName;
 
     /**
      * 创建时间

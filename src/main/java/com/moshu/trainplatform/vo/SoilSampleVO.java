@@ -1,5 +1,6 @@
 package com.moshu.trainplatform.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.moshu.trainplatform.entity.SoilSample;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author Leo
@@ -24,16 +26,14 @@ public class SoilSampleVO implements Serializable {
      * 样本名称
      */
     private String sampleName;
-
+    /**
+     * 样本类型id
+     */
+    private String sampleTypeId;
     /**
      * 样本类型
      */
-    private String sampleType;
-    /**
-     * 记录ID
-     */
-    private Long recordId;
-
+    private String sampleTypeName;
     /**
      * 颜色
      */
@@ -45,9 +45,9 @@ public class SoilSampleVO implements Serializable {
     private String smell;
 
     /**
-     * 生物种类(植物根系)
+     * 生物种类
      */
-    private String origanism;
+    private String organism;
 
     /**
      * 颗粒硬度
@@ -82,7 +82,18 @@ public class SoilSampleVO implements Serializable {
     /**
      * 保水性
      */
-    private String watRetention;
+    private String waterRetention;
+
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime createTime;
+    /**
+     * 更新时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime updateTime;
 
     public SoilSampleVO(SoilSample soilSample) {
         BeanUtils.copyProperties(soilSample, this);
