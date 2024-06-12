@@ -12,12 +12,8 @@ public class RolePermission {
 
     @TableId(type = IdType.AUTO)
     private Integer rolePermissionId;
-    /**
-     * 权限ID
-     */
+
     private Integer permissionId;
-    /**
-     * 角色ID
-     */
+
     private Integer roleId;
 }

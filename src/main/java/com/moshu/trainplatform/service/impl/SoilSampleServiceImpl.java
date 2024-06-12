@@ -1,5 +1,6 @@
 package com.moshu.trainplatform.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.moshu.trainplatform.entity.SoilSample;
 import com.moshu.trainplatform.mapper.SoilSampleMapper;
@@ -22,7 +23,7 @@ public class SoilSampleServiceImpl extends ServiceImpl<SoilSampleMapper, SoilSam
     @Resource
     private SoilSampleMapper soilSampleMapper;
     @Override
-    public List<SoilSampleVO> listByRecordId(Long recordId) {
-        return soilSampleMapper.listByRecordId(recordId);
+    public List<SoilSampleVO> listByRecordId(IPage<SoilSampleVO>page,Long recordId) {
+        return soilSampleMapper.listByRecordId(page,recordId);
     }
 }

@@ -7,31 +7,28 @@ import lombok.Data;
 import java.util.List;
 
 
+/**
+ * 功能权限
+ */
 @Data
 public class Permission {
-    @TableId
-    private Integer permissionId;
-    /**
-     * 权限码
-     */
-    private String permissionCode;
-    /**
-     * 权限名
-     */
-    private String permissionName;
-    /**
-     * xxx
-     */
-    private String permissionEname;
 
-    private String actionList;
+	@TableId
+	private Integer permissionId;
 
-    private String dataAccess;
-    /**
-     * 备注
-     */
-    private String remark;
+	private String permissionCode;
 
-    @TableField(exist = false)
-    private List<PermissionAction> actionsList;
+	private String permissionName;
+
+	private String permissionEname;
+
+	private String actionList;
+
+	private String dataAccess;
+
+	private String remark;
+
+	@TableField(exist = false)
+	private List<PermissionAction> actionsList;
+
 }

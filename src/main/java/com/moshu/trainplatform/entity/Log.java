@@ -5,15 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class Log implements Serializable {
-    private static final long serialVersion =1L;
+public class Log {
 
     @TableField
-    private Long logId;
+    private Integer logId;
 
     private String ip;
 

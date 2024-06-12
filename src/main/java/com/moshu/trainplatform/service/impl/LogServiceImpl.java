@@ -7,6 +7,6 @@ import com.moshu.trainplatform.service.LogService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogService {
+public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogService {
 
 }

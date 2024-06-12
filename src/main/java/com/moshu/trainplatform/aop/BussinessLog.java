@@ -18,4 +18,5 @@ public @interface BussinessLog {
 	 * @return
 	 */
     String module();
+
 }

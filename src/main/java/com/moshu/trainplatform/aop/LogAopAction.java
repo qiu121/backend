@@ -45,7 +45,6 @@ public class LogAopAction {
             userInfo.setName("非用户调用");
         }
 
-
         Log log = new Log();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         log.setIp(GetIpUtil.getIpAddr(request));
@@ -57,7 +56,9 @@ public class LogAopAction {
         Object[] params = point.getArgs();
         // 拦截的方法参数类型
         Signature sig = point.getSignature();
-        if (!(sig instanceof MethodSignature)) throw new IllegalArgumentException("该注解只能用于方法");
+        if (!(sig instanceof MethodSignature)) {
+            throw new IllegalArgumentException("该注解只能用于方法");
+        }
 
         MethodSignature msig = (MethodSignature) sig;
         Class[] parameterTypes = msig.getMethod().getParameterTypes();
@@ -71,7 +72,7 @@ public class LogAopAction {
             BussinessLog bussinessLog = method.getAnnotation(BussinessLog.class);
             log.setUserName(userInfo.getUserName());
             log.setModule("【" + userInfo.getName() + "】" + bussinessLog.module());
-            log.setMethod(request.getRequestURL().toString());
+            log.setMethod(request.getRequestURL().toString());//方法
             log.setParams(JSON.toJSON(params).toString());
             try {
                 object = point.proceed();

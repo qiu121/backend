@@ -9,23 +9,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.Serializable;
 
-/**
- * @author ：RanGe
- * 创建时间： 2020-01-08 22:15
- * 目的: shiro 的 session 管理
- *      自定义session规则，实现前后分离，在跨域等情况下使用token 方式进行登录验证才需要，否则没必须使用本类。
- *      shiro默认使用 ServletContainerSessionManager 来做 session 管理，它是依赖于浏览器的 cookie 来维护 session 的,
- * 		调用 storeSessionId  方法保存sesionId 到 cookie中
- *      为了支持无状态会话，我们就需要继承 DefaultWebSessionManager
- *      自定义生成sessionId 则要实现 SessionIdGenerator
- * 备注说明：
- */
 public class ShiroSession extends DefaultWebSessionManager {
 
     /**
      * 定义的请求头中使用的标记key，用来传递 token
      */
-    private static final String AUTH_TOKEN = "AUTH_TOKEN";
+    private static final String AUTH_TOKEN = "authToken";
 
     private static final String REFERENCED_SESSION_ID_SOURCE = "Stateless request";
 
@@ -51,7 +40,7 @@ public class ShiroSession extends DefaultWebSessionManager {
     @Override
     protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
         //获取请求头中的 AUTH_TOKEN 的值，如果请求头中有 AUTH_TOKEN 则其值为sessionId。shiro就是通过sessionId 来控制的
-        String sessionId = WebUtils.toHttp(request).getHeader(AUTH_TOKEN);
+        String sessionId = WebUtils.toHttp(request).getHeader("AUTH_TOKEN");
         if (StringUtils.isEmpty(sessionId)){
             //如果没有携带id参数则按照父类的方式在cookie进行获取sessionId
             return super.getSessionId(request, response);

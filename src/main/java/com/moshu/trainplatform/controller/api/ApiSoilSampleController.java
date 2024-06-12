@@ -1,6 +1,8 @@
 package com.moshu.trainplatform.controller.api;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.moshu.trainplatform.dto.PageDTO;
 import com.moshu.trainplatform.entity.Record;
 import com.moshu.trainplatform.entity.SoilSample;
 import com.moshu.trainplatform.service.RecordService;
@@ -33,10 +35,14 @@ public class ApiSoilSampleController {
      * @param recordId
      * @return
      */
-    @GetMapping("/list/{recordId}")
-    public SuccessResponse get(@PathVariable Long recordId) {
+    @PostMapping("/list/{recordId}")
+    public SuccessResponse get(@RequestBody PageDTO pageDTO, @PathVariable Long recordId) {
 
-        List<SoilSampleVO> list = soilSampleService.listByRecordId(recordId);
+        Integer currentPage = pageDTO.getCurrentPage();
+        Integer pageSize = pageDTO.getPageSize();
+
+        Page<SoilSampleVO> page = new Page<>(currentPage, pageSize);
+        List<SoilSampleVO> list = soilSampleService.listByRecordId(page, recordId);
         SuccessResponse response = new SuccessResponse(200);
         response.put("result", list);
 

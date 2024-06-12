@@ -1,8 +1,7 @@
 package com.moshu.trainplatform.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class UserRole {
@@ -12,5 +11,8 @@ public class UserRole {
 	private String userId;
 
 	private Integer roleId;
+
+	@TableField(exist = false)
+	private Role role;
 
 }

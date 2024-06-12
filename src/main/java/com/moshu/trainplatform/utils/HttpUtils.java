@@ -1,13 +1,7 @@
 package com.moshu.trainplatform.utils;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import javax.annotation.Resource;
-import java.util.Map;
 
 /**
  * 文件名：  ${file_name}

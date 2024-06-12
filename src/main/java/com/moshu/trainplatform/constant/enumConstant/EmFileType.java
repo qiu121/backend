@@ -1,13 +1,9 @@
 package com.moshu.trainplatform.constant.enumConstant;
 
-public enum EmProjectStatus {
+public enum EmFileType {
 
-    Declaration("declaration", 0),
-    Approval("approval", 1),
-    Conclusion("conclusion", 2),
-    Assessment("assessment", 3),
-    End("end", 4),
-
+    PICTURE("PICTURE", 0),
+    OTHER("OTHER", 1)
     ;
 
 
@@ -15,7 +11,7 @@ public enum EmProjectStatus {
     private final String name;
     private final int index;
     // 构造方法
-    private EmProjectStatus(String name, int index) {
+    private EmFileType(String name, int index) {
         this.name = name;
         this.index = index;
     }

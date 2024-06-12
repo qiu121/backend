@@ -10,12 +10,12 @@ import java.util.Set;
 
 @Component
 public class RedisCleaner implements ApplicationRunner {
-    // 启动时清理所有Redis缓存
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        // 启动时清理所有Redis缓存
         Set<String> keys = stringRedisTemplate.keys("*");
 //        stringRedisTemplate.delete(keys);
     }

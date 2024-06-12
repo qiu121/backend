@@ -1,23 +1,37 @@
 package com.moshu.trainplatform.template;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.moshu.trainplatform.constant.exception.EmBizError;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
 public class ExceptionResponse implements IResponse {
 
 	private Integer code;
-	private Exception exception;
+
+	private String msg;
+
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+	private LocalDateTime time;
 	
-	private ExceptionResponse() { }
-	
-	public ExceptionResponse(int code, Exception exception) {
+	private ExceptionResponse(int code) {
 		this.code = code;
-		this.exception = exception;
+		this.msg = "请求失败！";
+		this.time = LocalDateTime.now();
 	}
 	
-	public Integer getCode() {
-		return code;
+	public ExceptionResponse(int code, String msg) {
+		this.code = code;
+		this.msg = msg;
+		this.time = LocalDateTime.now();
 	}
-	
-	public String getMessage() {
-		return exception.getMessage();
+
+	public ExceptionResponse(EmBizError emBizError) {
+		this.code = emBizError.getErrCode();
+		this.msg = emBizError.getErrMsg();
+		this.time = LocalDateTime.now();
 	}
 	
 }

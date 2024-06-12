@@ -1,36 +1,26 @@
 package com.moshu.trainplatform.entity;
 
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class Notification {
-    String id;
+public class FileInfo {
 
-    @TableField(exist = false)
-    String fromName;
-    String fromId;
+    @TableId
+    private String fileId;
 
-    @TableField(exist = false)
-    String toName;
-    String toId;
+    private String fileName;
 
-    String projectId;
+    private String commonId;
 
-    String content;
-    String type;
-    String status;
+    private String module;
 
-    @TableField(exist = false)
-    String projectName;
-
-    @TableField(exist = false)
-    String projectCode;
+    private String filePath;
 
     @TableField(fill = FieldFill.INSERT)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")

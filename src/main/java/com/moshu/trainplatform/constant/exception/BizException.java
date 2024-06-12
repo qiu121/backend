@@ -2,9 +2,9 @@ package com.moshu.trainplatform.constant.exception;
 
 
 //包装器业务异常实现
-public class BizException extends RuntimeException implements CommonError {
+public class BizException extends Exception implements CommonError {
 
-    private final CommonError commonError;
+    private CommonError commonError;
 
     //直接接受EmBusinessError的传参用于构造业务异常
     public BizException(CommonError commonError) {

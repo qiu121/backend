@@ -139,22 +139,19 @@ private List<Map<String,Object>> readExcelValue(Workbook wb,int sheetNum,List ke
        this.totalRows=sheet.getPhysicalNumberOfRows();
       //得到Excel的列数(前提是有行数)
        if(totalRows>=1 && sheet.getRow(0) != null){
-            this.totalCells=sheet.getRow(0).getPhysicalNumberOfCells();
+           this.totalCells=sheet.getRow(0).getPhysicalNumberOfCells();
        }
        List<Map<String,Object>> mapList=new ArrayList<Map<String,Object>>();
-//       Customer customer;  
        Map<String, Object> map;
       //循环Excel行数,从第二行开始。标题不入库
        for(int r=1;r<totalRows;r++){
            Row row = sheet.getRow(r);
            if (row == null) continue;
            map = new LinkedHashMap<>();
-           
            //循环Excel的列
            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
            for(int c = 0; c <this.totalCells; c++){    
                Cell cell = row.getCell(c);
-//               row.getCell(c).setCellType(Cell.CELL_TYPE_STRING);//设置单元格的类型
                if (null != cell){
                    if (HSSFCell.CELL_TYPE_NUMERIC == cell.getCellType()) {//如果是时间格式
                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
@@ -167,6 +164,8 @@ private List<Map<String,Object>> readExcelValue(Workbook wb,int sheetNum,List ke
                        row.getCell(c).setCellType(Cell.CELL_TYPE_STRING);//设置单元格的类型
                        map.put(keyList.get(c).toString(),cell.getStringCellValue());                	   
                    }
+               } else {
+                   map.put(keyList.get(c).toString(), "");
                }
            }
            mapList.add(map);

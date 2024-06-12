@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class PermissionServiceImpl implements PermissionService{
+public class PermissionServiceImpl implements PermissionService {
 
     @Autowired
     PermissionMapper permissionMapper;

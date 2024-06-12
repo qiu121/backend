@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.moshu.trainplatform.mapper.UserInfoMapper" >
+
+    <select id="getAllUserInfo" resultType="com.moshu.trainplatform.entity.UserInfo">
+        SELECT ui.* FROM user_info ui
+        INNER JOIN user_role ur on ui.user_id  = ur.user_id
+        <where>
+            ui.user_id != #{query.nowUserId}
+            <if test="query.userName != null and query.userName != ''">
+                and ui.user_name like CONCAT('%',#{query.userName},'%')
+            </if>
+            <if test="query.name != null and query.name != ''">
+                and ui.name like CONCAT('%',#{query.name},'%')
+            </if>
+            <if test="query.status != null">
+                and ui.status = #{query.status}
+            </if>
+            <if test="query.roleIds != null and query.roleIds.size > 0">
+                and ur.role_id in
+                <foreach collection="query.roleIds" item="roleId" index="index" open="(" close=")" separator=",">
+                    #{roleId}
+                </foreach>
+            </if>
+        </where>
+        order by ui.created_time desc
+        limit #{query.currentPage},#{query.pageSize}
+    </select>
+
+    <select id="getAllUserInfoCount" resultType="java.lang.Integer">
+        SELECT COUNT(ui.user_id) FROM user_info ui
+        INNER JOIN user_role ur on ui.user_id  = ur.user_id
+        <where>
+            ui.user_id != #{query.nowUserId}
+            <if test="query.userName != null and query.userName != ''">
+                and ui.user_name like CONCAT('%',#{query.userName},'%')
+            </if>
+            <if test="query.name != null and query.name != ''">
+                and ui.name like CONCAT('%',#{query.name},'%')
+            </if>
+            <if test="query.status != null">
+                and ui.status = #{query.status}
+            </if>
+            <if test="query.roleIds != null and query.roleIds.size > 0">
+                and ur.role_id in
+                <foreach collection="query.roleIds" item="roleId" index="index" open="(" close=")" separator=",">
+                    #{roleId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>

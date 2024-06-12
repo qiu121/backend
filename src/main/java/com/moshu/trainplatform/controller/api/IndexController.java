@@ -1,13 +1,17 @@
 package com.moshu.trainplatform.controller.api;
 
+
 import com.moshu.trainplatform.aop.BussinessLog;
 import com.moshu.trainplatform.aop.LogType;
+import com.moshu.trainplatform.constant.Constant;
+import com.moshu.trainplatform.constant.exception.EmBizError;
 import com.moshu.trainplatform.entity.UserInfo;
+import com.moshu.trainplatform.service.UserInfoService;
 import com.moshu.trainplatform.template.SuccessResponse;
-import com.moshu.trainplatform.utils.Token;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
+import com.moshu.trainplatform.utils.JwtUtils;
+import com.moshu.trainplatform.utils.TokenUtil;
+import com.moshu.trainplatform.utils.UserUtil;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -23,93 +27,75 @@ import java.util.concurrent.TimeUnit;
 
 @Controller
 public class IndexController {
+    @Autowired
+    private UserInfoService userInfoService;
 
     @Autowired
     RedisTemplate redisTemplate;
-    @Autowired
-    private Token token;
 
     @GetMapping("/unauth")
     @ResponseBody
-    public Object unAuth() {
-        Map<String, Object> map = new HashMap<>();
+    public Object unauth() {
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("code", "1000000");
         map.put("msg", "未登录");
         return map;
     }
 
-    @GetMapping("/UnauthorizedUrl")
-    @ResponseBody
-    public Object unauthorizedUrl() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("code", "1000001");
-        map.put("msg", "未授权");
-        return map;
-    }
-
-
     @GetMapping("/loginOut")
     @ResponseBody
+    @BussinessLog(module = LogType.LOG_OUT)
     public SuccessResponse loginOut() {
-        // 删除token
-        redisTemplate.delete("shiro:session:" + new Token().getToken());
-
-        // 删除用户信息
-        redisTemplate.delete("userInfo:token:" + new Token().getToken());
-        SuccessResponse sr = new SuccessResponse(200);
-        return sr;
+        redisTemplate.delete(TokenUtil.getToken());
+        redisTemplate.delete(Constant.SYSTEM_CODE + UserUtil.getUserInfoByToken().getUserId());
+        return new SuccessResponse(200);
     }
 
     @PostMapping("/login")
     @ResponseBody
     @BussinessLog(module = LogType.LOGIN_SUCCESSFUL)
     public SuccessResponse login(@RequestBody UserInfo user) {
-        user.setUserName(user.getUserName().trim());
-        user.setPassword(user.getPassword().trim());
         ValueOperations<String, Object> ops = redisTemplate.opsForValue();
 
         var failedKey = "loginfailed:" + user.getUserName();
-        if (redisTemplate.hasKey(failedKey)) {
-            if ((int) ops.get(failedKey) >= 5) {
-                SuccessResponse sr = new SuccessResponse(402);
-                sr.put("message", "登录失败次数过多，请稍后再试");
-                return sr;
-            }
-        }
+        if (!redisTemplate.hasKey(failedKey)) ops.set(failedKey, 0, 3, TimeUnit.MINUTES);
 
-        // 添加用户认证信息
-        Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(user.getUserName(), user.getPassword());
+        // 判断失败次数
+        if ((int) ops.get(failedKey) >= 5) return new SuccessResponse(EmBizError.USER_TOO_MANY_FAILED_LOGIN_ATTEMPTS);
 
-        UserInfo userInfo;
         try {
-            // 进行验证，这里可以捕获异常，然后返回对应信息
-            subject.login(usernamePasswordToken);
-            userInfo = (UserInfo) subject.getPrincipals().getPrimaryPrincipal();
+            UserInfo userInfo =  userInfoService.getUserByUsername(user.getUserName());
+            if (userInfo == null) {
+                ops.set(failedKey, (int) ops.get(failedKey) + 1, 3, TimeUnit.MINUTES);
+                return new SuccessResponse(EmBizError.USER_INCORRECT_USERNAME_OR_PASSWORD);
+            }
 
+            Object result = new SimpleHash("MD5", user.getPassWord() , userInfo.getUserName() + userInfo.getSalt(), 3);
+            if(!userInfo.getPassWord().equals(result.toString())){
+                ops.set(failedKey, (int) ops.get(failedKey) + 1, 3, TimeUnit.MINUTES);
+                return new SuccessResponse(EmBizError.USER_INCORRECT_USERNAME_OR_PASSWORD);
+            }
+
+            //删除登陆失败记录
+            redisTemplate.delete(failedKey);
+
+            // 保存token 对应的账号
+            String token = JwtUtils.createToken(user.getUserName(), user.getPassWord());
+            Map<String, String> userMap = new HashMap<>();
+            userMap.put("userId", userInfo.getUserId());
+            userMap.put("userName", userInfo.getUserName());
+            ops.set(token, userMap, 3, TimeUnit.HOURS);
+            // 保存用户的基本信息
+            ops.set(Constant.SYSTEM_CODE + userInfo.getUserId(), userInfo, 3, TimeUnit.HOURS);
+
+            SuccessResponse sr = new SuccessResponse(200);
+            sr.put("token", token);
+            sr.put("userInfo", userInfo);
+            return sr;
         } catch (Exception e) {
             e.printStackTrace();
-            SuccessResponse sr = new SuccessResponse(401);
-            sr.put("message", "账号或密码错误");
-            if (redisTemplate.hasKey(failedKey)) {
-                ops.set(failedKey, (int) ops.get(failedKey) + 1, 3, TimeUnit.MINUTES);
-            } else {
-                ops.set(failedKey, 1, 3, TimeUnit.MINUTES);
-            }
-            return sr;
+            return new SuccessResponse(EmBizError.UNKNOWN_ERROR);
         }
-        // 删除登陆失败记录
-        redisTemplate.delete(failedKey);
-        ((UserInfo) subject.getPrincipals().getPrimaryPrincipal()).getUserName();
-
-        // 将用户信息存入redis
-        ops.set("userInfo:token:" + subject.getSession().getId().toString(), userInfo);
-
-        SuccessResponse sr = new SuccessResponse(200);
-        sr.put("userInfo", userInfo);
-        sr.put("token", subject.getSession().getId().toString());
-        return sr;
     }
-
 
 }

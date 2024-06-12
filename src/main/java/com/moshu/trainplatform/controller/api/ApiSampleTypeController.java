@@ -1,7 +1,5 @@
 package com.moshu.trainplatform.controller.api;
 
-import com.moshu.trainplatform.constant.exception.BizException;
-import com.moshu.trainplatform.constant.exception.EmBizError;
 import com.moshu.trainplatform.dto.SampleTypeDTO;
 import com.moshu.trainplatform.entity.SampleType;
 import com.moshu.trainplatform.service.SampleTypeService;
@@ -30,7 +28,7 @@ public class ApiSampleTypeController {
     private final SampleTypeService sampleTypeService;
 
     @GetMapping("/list")
-    @RequiresRoles(value = {"admin", "user"}, logical = Logical.OR)
+    @RequiresRoles(value = {"admin", "maintain","user"}, logical = Logical.OR)
     public SuccessResponse list() {
         List<SampleType> list = sampleTypeService.list();
         SuccessResponse response = new SuccessResponse(200);
@@ -77,9 +75,9 @@ public class ApiSampleTypeController {
                 .map(SampleType::getSampleTypeName)
                 .collect(Collectors.toSet());
 
-        if (sampleTypeNameList.contains(sampleTypeName)) {
-            throw new BizException(EmBizError.DUPLICATE_INSERT_ERROR, EmBizError.DUPLICATE_INSERT_ERROR.getErrMsg());
-        }
+        // if (sampleTypeNameList.contains(sampleTypeName)) {
+        //     throw new BizException(EmBizError.DUPLICATE_INSERT_ERROR, EmBizError.DUPLICATE_INSERT_ERROR.getErrMsg());
+        // }
     }
 
 }

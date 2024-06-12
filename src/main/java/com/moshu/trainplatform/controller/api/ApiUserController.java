@@ -1,232 +1,241 @@
 package com.moshu.trainplatform.controller.api;
 
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.moshu.trainplatform.aop.BussinessLog;
+import com.moshu.trainplatform.aop.LogType;
+import com.moshu.trainplatform.constant.enumConstant.EmRoleType;
 import com.moshu.trainplatform.constant.exception.EmBizError;
-import com.moshu.trainplatform.controller.api.query.UserInfoQuery;
+import com.moshu.trainplatform.dto.UserInfoDTO;
 import com.moshu.trainplatform.entity.Permission;
-import com.moshu.trainplatform.entity.Register;
+import com.moshu.trainplatform.entity.query.UserInfoQuery;
 import com.moshu.trainplatform.entity.UserInfo;
 import com.moshu.trainplatform.entity.UserRole;
-import com.moshu.trainplatform.mapper.UserRoleMapper;
+import com.moshu.trainplatform.mapper.UserInfoMapper;
 import com.moshu.trainplatform.service.PermissionService;
-import com.moshu.trainplatform.service.UserService;
+import com.moshu.trainplatform.service.RoleService;
+import com.moshu.trainplatform.service.UserInfoService;
+import com.moshu.trainplatform.service.UserRoleService;
 import com.moshu.trainplatform.template.SuccessResponse;
-import com.moshu.trainplatform.utils.Token;
 import com.moshu.trainplatform.utils.UserUtil;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/api/user")
 public class ApiUserController {
 
     @Autowired
-    private UserService userService;
+    private UserInfoService userInfoService;
+
     @Autowired
-    RedisTemplate redisTemplate;
+    private RoleService roleService;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private UserInfoMapper userInfoMapper;
 
     @Autowired
     PermissionService permissionService;
 
-    @Autowired
-    Token token;
-    @Autowired
-    UserRoleMapper userRoleMapper;
-
-
-    @GetMapping("updatePwd")
+    /***
+     * 获取登录用户信息
+     */
+    @GetMapping("/getInfoByReact")
+    @BussinessLog(module = LogType.GET_USER_LOGIN_INFORMATION)
     @ResponseBody
-    public SuccessResponse updatePwd(@RequestParam("oldPwd") String oldPwd,
-                                     @RequestParam("newPwd") String newPwd,
-                                     @RequestParam("confirmPassword") String confirmPassword) {
-
+    public SuccessResponse getInfoByReact() {
         UserInfo userInfo = UserUtil.getUserInfoByToken();
-        Object result = new SimpleHash("MD5", oldPwd, userInfo.getUserName() + userInfo.getSalt(), 3);
-        if (!userInfo.getPassword().equals(result.toString())) {
-            return new SuccessResponse(EmBizError.ERROR_OLD_PASSWORD.getErrCode());
+        //获取用户权限、添加角色
+        Integer roleId = userInfo.getRole().getRoleId();
+        // 获取当前权限的授权的功能
+        List<Permission> PermissionInfoList = permissionService.getPermissionInfoByReact(roleId);
+        userInfo.setPermissions(PermissionInfoList);
+        userInfo.setPassWord("");
+        userInfo.setSalt("");
+        SuccessResponse sr = new SuccessResponse(200);
+        //用户基本信息
+        sr.put("userInfo", userInfo);
+        //用户权限信息
+        return sr;
+    }
+
+    /**
+     * 查询
+     * 所有用户信息
+     */
+    @PostMapping("getAllUserInfo")
+    @BussinessLog(module = LogType.QUERY_ALL_USER_INFORMATION)
+    @RequiresRoles(value={"admin","maintain"},logical = Logical.OR)
+    @ResponseBody
+    public SuccessResponse getAllUserInfo(@RequestBody UserInfoQuery userInfoQuery) {
+        // 分页
+        userInfoQuery.setCurrentPage((userInfoQuery.getCurrentPage() - 1) * userInfoQuery.getPageSize());
+        userInfoQuery.setNowUserId(UserUtil.getUserInfoByToken().getUserId());
+
+        List<UserInfo> userInfoList = userInfoMapper.getAllUserInfo(userInfoQuery);
+        for (UserInfo userInfo : userInfoList) {
+            UserRole userRole = userRoleService.getUserRoleByUserId(userInfo.getUserId());
+            userInfo.setRole(userRole.getRole());
         }
 
-        userService.updatePwd(userInfo.getUserId(), newPwd);
-        return new SuccessResponse(200);
+        SuccessResponse sr = new SuccessResponse(200);
+        sr.put("userInfoList", userInfoList);
+        sr.put("total", userInfoMapper.getAllUserInfoCount(userInfoQuery));
+        return sr;
     }
 
     /**
      * 根据用户id获取用户信息
-     *
      * @return
      */
-    @GetMapping("findUserInfo")
+    @GetMapping("getUserInfoByUserId")
+    @BussinessLog(module = LogType.GET_USER_INFORMATION_BY_USER_ID)
     @ResponseBody
-    public SuccessResponse findUserInfo() {
-        ValueOperations<String, Object> ops = redisTemplate.opsForValue();
-        UserInfo userInfo = (UserInfo) ops.get("userInfo:token:" + token.getToken());
-        UserInfo user = userService.getUserInfoByUserId(userInfo.getUserId());
+    public SuccessResponse getUserInfoByUserId(@RequestParam String userId) {
+        UserInfo atUserInfo = UserUtil.getUserInfoByToken();
+        // 用户
+        if (StringUtils.isBlank(userId)) {
+            userId = atUserInfo.getUserId();
+        }
+        if (UserUtil.isRole(EmRoleType.USER.toString())) {
+            userId = atUserInfo.getUserId();
+        }
+
+        UserInfo userInfo = userInfoService.getById(userId);
+        userInfo.setRoleId(userRoleService.getUserRoleByUserId(userId).getRoleId());
+        userInfo.setPassWord("");
         SuccessResponse sp = new SuccessResponse(200);
-        sp.put("user", user);
+        sp.put("userInfo", userInfo);
         return sp;
     }
 
     /**
-     * 修改用户基本信息
-     *
-     * @param name
-     * @param gender
-     * @param phone
-     * @param email
-     * @return
+     * 注册
+     * 用户基本信息
      */
-    @PostMapping("updateUserInfo")
+    @PostMapping("registerUser")
+    @BussinessLog(module = LogType.REGISTER_USER_INFORMATION)
+    @RequiresRoles(value={"admin","maintain"},logical = Logical.OR)
     @ResponseBody
-    public SuccessResponse updateUserInfo(@RequestParam("name") String name,
-                                          @RequestParam("gender") String gender,
-                                          @RequestParam("phone") String phone,
-                                          @RequestParam("email") String email) {
-        ValueOperations<String, Object> ops = redisTemplate.opsForValue();
-        UserInfo userInfo = (UserInfo) ops.get("userInfo:token:" + token.getToken());
-        userService.updateUserInfoByUserId(userInfo.getUserId(), name, gender, phone, email);
-        SuccessResponse sp = new SuccessResponse(200);
-        return sp;
-    }
-
-    /***
-     * 测试获取用户信息（react）
-     */
-    @GetMapping("/getInfoByReact")
-    @ResponseBody
-    public SuccessResponse getInfoByReact() {
-        UserInfo userInfo = UserUtil.getUserInfoByToken();
-
-        // 获取用户权限
-        // 添加角色
-        Integer roleId = userInfo.getRole().getRoleId();
-
-        // 获取当前权限的授权的功能
-        List<Permission> permissionInfoList = permissionService.getPermissionInfoByReact(roleId);
-        userInfo.setPermissions(permissionInfoList);
-
-        SuccessResponse sr = new SuccessResponse(200);
-        // 用户基本信息
-        sr.put("userInfo", userInfo);
-        // 用户权限信息
-        return sr;
-    }
-
-    /***
-     * 测试获取用户信息
-     */
-    @GetMapping("/getInfo")
-    @ResponseBody
-    public SuccessResponse getInfo() {
-        ValueOperations<String, Object> ops = redisTemplate.opsForValue();
-        System.out.println("token:" + token.getToken());
-        UserInfo userInfo = (UserInfo) ops.get("userInfo:token:" + token.getToken());
-
-        // 获取用户权限
-        Integer roleId = userInfo.getRole().getRoleId();
-        String roleName = userInfo.getRole().getRole();
-
-        // 获取当前权限的授权的功能
-        List<Map<String, Object>> PermissionInfoList = permissionService.getPermissionInfo(roleId);
-        // 权限赋值
-        JSONObject roleObj = new JSONObject();
-        roleObj.put("id", userInfo.getUserId());
-        roleObj.put("name", userInfo.getUserName());
-        roleObj.put("describe", "");
-        roleObj.put("status", 1);
-        roleObj.put("creatorId", "system");
-        roleObj.put("createTime", "1497160610259");
-        roleObj.put("deleted", 0);
-
-        // 开始赋予功能权限
-        List<JSONObject> permissionsList = new ArrayList<>();
-        for (Map<String, Object> permissionMap : PermissionInfoList) {
-            JSONObject permissionsJson = new JSONObject();
-            permissionsJson.put("roleId", roleName);
-            permissionsJson.put("permissionId", permissionMap.get("permissionCode"));
-            permissionsJson.put("permissionName", permissionMap.get("permissionName"));
-
-            List<JSONObject> actionsList = new ArrayList<>();
-
-            List<Map<String, Object>> permissionsActionsInfoList = (List<Map<String, Object>>) permissionMap.get("ActionsInfo");
-
-            for (Map<String, Object> thisMap : permissionsActionsInfoList) {
-                JSONObject actionsJson = new JSONObject();
-                actionsJson.put("action", thisMap.get("actionCode"));
-                actionsJson.put("defaultCheck", thisMap.get("defaultCheck"));
-                actionsJson.put("describe", thisMap.get("describe"));
-                actionsList.add(actionsJson);
-            }
-
-            permissionsJson.put("actions", actionsList);
-            permissionsJson.put("actionEntitySet", actionsList);
-
-            permissionsJson.put("actionList", (permissionMap.get("actionList") == null ? null : permissionMap.get("actionList")));
-            permissionsJson.put("dataAccess", (permissionMap.get("dataAccess") == null ? null : permissionMap.get("dataAccess")));
-            permissionsList.add(permissionsJson);
+    public SuccessResponse registerUser(@RequestBody UserInfo userInfo) {
+        // 判断密码
+        if (userInfo.getPassWord().length() < 8) {
+            return new SuccessResponse(EmBizError.USER_PASSWORD_LENGTH_INSUFFICIENT);
         }
-        roleObj.put("permissions", permissionsList);
-
-        SuccessResponse sr = new SuccessResponse(200);
-        // 用户基本信息
-        sr.put("userInfo", userInfo);
-        // 用户权限信息
-        sr.put("role", roleObj);
-        return sr;
-    }
-
-
-    @PostMapping("register")
-    @ResponseBody
-    public SuccessResponse register(@RequestBody Register register) {
-        UserInfo user = userService.getUserByUsername(register.getUserName());
-        if (user != null) {
-            return new SuccessResponse(1002);
-        }
-        String userId;
-        try {
-            userId = userService.registerUser(register.getUserName(), register.getPassword(), register.getName(), register.getEmail(), register.getPhone());
-        } catch (Exception ex) {
-            return new SuccessResponse(500);
+        // 判断账号是否存在
+        if (userInfoService.getUserByUsername(userInfo.getUserName()) != null) {
+            return new SuccessResponse(EmBizError.USER_ALREADY_EXISTS);
         }
 
-        SuccessResponse sp = new SuccessResponse(200);
-        sp.put("userId", userId);
-        return sp;
-    }
-
-
-    // account
-    @PostMapping("getAllUserInfo")
-    @ResponseBody
-    public SuccessResponse getAllUserInfo(@RequestBody UserInfoQuery userInfoQuery) {
-        userInfoQuery.setRoleId("1");
-        List<UserInfo> result = userService.getAllUserInfo(userInfoQuery);
-        SuccessResponse sp = new SuccessResponse(200);
-        sp.put("result", result);
-        return sp;
-    }
-
-    @PostMapping("delById")
-    @ResponseBody
-    public SuccessResponse delById(@RequestBody List<String> ids) {
-        String id = ids.get(0);
-        LambdaQueryWrapper<UserRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserRole::getUserId, id);
-        userRoleMapper.delete(wrapper);
-        userService.removeById(id);
+        userInfoService.registerUser(userInfo);
         return new SuccessResponse(200);
     }
+
+    /**
+     * 修改
+     * 用户基本信息
+     */
+    @PostMapping("modifyUserInfo")
+    @BussinessLog(module = LogType.UPDATE_USER_BASIC_INFORMATION)
+    @Transactional(rollbackFor = Exception.class)
+    @ResponseBody
+    public SuccessResponse modifyUserInfo(@RequestBody UserInfo userInfo) {
+        // 管理员直接改
+        if (UserUtil.isRole(EmRoleType.ADMIN.toString()) && StringUtils.isNotBlank(userInfo.getUserId())) {
+            // 更新基本信息
+            UserInfo modifyUserInfo = userInfoService.getById(userInfo.getUserId());
+            modifyUserInfo.setName(userInfo.getName());
+            modifyUserInfo.setStatus(userInfo.getStatus());
+            modifyUserInfo.setPhone(userInfo.getPhone());
+            modifyUserInfo.setEmail(userInfo.getEmail());
+            userInfoService.updateById(modifyUserInfo);
+
+            // 判断是否修改用户账号
+            if (StringUtils.isNotBlank(userInfo.getPassWord())) {
+                if (userInfo.getPassWord().length() < 8) return new SuccessResponse(EmBizError.USER_PASSWORD_LENGTH_INSUFFICIENT);
+                if (!userInfo.getUserName().equals(modifyUserInfo.getUserName())) {
+                    // 判断账号是否存在
+                    if (userInfoService.getUserByUsername(userInfo.getUserName()) != null) {
+                        return new SuccessResponse(EmBizError.USER_ALREADY_EXISTS);
+                    }
+                }
+                modifyUserInfo.setUserName(userInfo.getUserName());
+                userInfoService.resetPassWord(modifyUserInfo, userInfo.getPassWord());
+            }
+
+            if (userInfo.getRoleId() != null && UserUtil.isRole(EmRoleType.ADMIN.toString())) {
+                LambdaUpdateWrapper<UserRole> updateWrapper = new LambdaUpdateWrapper<>();
+                updateWrapper.set(UserRole::getRoleId, userInfo.getRoleId());
+                updateWrapper.eq(UserRole::getUserId, userInfo.getUserId());
+                userRoleService.update(updateWrapper);
+            }
+        } else {
+            UserInfo modifyUserInfo = UserUtil.getUserInfoByToken();
+            modifyUserInfo.setName(userInfo.getName());
+            modifyUserInfo.setPhone(userInfo.getPhone());
+            modifyUserInfo.setEmail(userInfo.getEmail());
+            userInfoMapper.updateById(modifyUserInfo);
+            // 不为空就更新密码
+            if (StringUtils.isNotBlank(userInfo.getPassWord())) {
+                // 判断密码
+                if (userInfo.getPassWord().length() < 8) return new SuccessResponse(EmBizError.USER_PASSWORD_LENGTH_INSUFFICIENT);
+
+                // 判断旧密码是否正确
+                Object pwd = new SimpleHash("MD5", userInfo.getOldPassWord(), modifyUserInfo.getUserName() + modifyUserInfo.getSalt(), 3);
+                if (!pwd.toString().equals(modifyUserInfo.getPassWord())) return new SuccessResponse(EmBizError.USER_INCORRECT_PASSWORD);
+
+                userInfoService.resetPassWord(modifyUserInfo, userInfo.getPassWord());
+            }
+        }
+        return new SuccessResponse(200);
+    }
+
+    /**
+     * 用户、管理员
+     * 修改密码
+     */
+    @PostMapping("resetPassWord")
+    @BussinessLog(module = LogType.CHANGE_ACCOUNT_PASSWORD)
+    @ResponseBody
+    public SuccessResponse resetPassWord(@RequestBody UserInfoDTO userInfoDTO) {
+        // 当前登录用户信息
+        UserInfo userInfo = UserUtil.getUserInfoByToken();
+        if (UserUtil.isRole(EmRoleType.USER.toString())) {
+            Object result = new SimpleHash("MD5", userInfoDTO.getOldPwd(), userInfo.getUserName() + userInfo.getSalt(), 3);
+            if (!userInfo.getPassWord().equals(result.toString())) return new SuccessResponse(EmBizError.USER_INCORRECT_PASSWORD);
+        }
+
+        // 管理员直接改
+        if (UserUtil.isRole(EmRoleType.ADMIN.toString())) {
+            userInfo = userInfoMapper.selectById(userInfoDTO.getUserId());
+        }
+
+        userInfoService.resetPassWord(userInfo, userInfoDTO.getNewPwd());
+        return new SuccessResponse(200);
+    }
+
+    /**
+     * 管理员
+     * 删除用户信息
+     */
+    @GetMapping("delUserInfoByUserId")
+    @RequiresRoles(value={"admin","maintain"},logical = Logical.OR)
+    @BussinessLog(module = LogType.DELETE_USER_INFORMATION)
+    @ResponseBody
+    public SuccessResponse delUserInfoByUserId(@RequestParam String userId) {
+        // TODO 需要判断是否有数据
+        userInfoService.delUserInfoByUserId(userId);
+        return new SuccessResponse(200);
+    }
+
 }
-
-
-
-

@@ -3,7 +3,7 @@ package com.moshu.trainplatform.constant.enumConstant;
 public enum EmUserRole {
 
     ADMIN("admin", 0),
-    TEACHER("teacher", 1),
+    MAINTAIN("maintain", 1),
     USER("user", 2);
 
     // 成员变量
