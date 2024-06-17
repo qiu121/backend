@@ -3,6 +3,8 @@ package com.moshu.trainplatform.controller.api;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.moshu.trainplatform.aop.BussinessLog;
+import com.moshu.trainplatform.aop.LogType;
 import com.moshu.trainplatform.dto.PageDTO;
 import com.moshu.trainplatform.entity.Record;
 import com.moshu.trainplatform.entity.SoilSample;
@@ -32,12 +34,14 @@ public class ApiSoilSampleController {
     private final RecordService recordService;
 
     /**
-     * 查询记录下的土壤样本
+     * 分页查询记录下的土壤样本
      *
-     * @param recordId
+     * @param pageDTO  分页入参
+     * @param recordId 实验记录 id
      * @return
      */
     @PostMapping("/list/{recordId}")
+    @BussinessLog(module = LogType.LIST_SAMPLE_RECORD_ID)
     public SuccessResponse get(@RequestBody PageDTO pageDTO, @PathVariable Long recordId) {
 
         Integer currentPage = pageDTO.getCurrentPage();
@@ -61,12 +65,13 @@ public class ApiSoilSampleController {
      * @return
      */
     @PostMapping("/add")
+    @BussinessLog(module = LogType.ADD_SAMPLE)
     public SuccessResponse add(@RequestBody SoilSample soilSample) {
 
         boolean save = soilSampleService.save(soilSample);
         log.debug("save = {}", save);
 
-        // 更新实验记录提交时间
+        // 更新实验记录提交时间、提交数据状态
         LambdaUpdateWrapper<Record> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Record::getId, soilSample.getRecordId())
                 .set(Record::getSubmitTime, LocalDateTime.now())
@@ -83,10 +88,12 @@ public class ApiSoilSampleController {
      * @return
      */
     @PutMapping("/update")
+    @BussinessLog(module = LogType.UPDATE_SAMPLE)
     public SuccessResponse update(@RequestBody SoilSample soilSample) {
 
         boolean update = soilSampleService.updateById(soilSample);
 
+        // 更新样本时，同步更新实验记录-修改时间
         LambdaUpdateWrapper<Record> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Record::getId, soilSample.getRecordId())
                 .set(Record::getUpdateTime, LocalDateTime.now());
@@ -103,14 +110,20 @@ public class ApiSoilSampleController {
      * @return
      */
     @DeleteMapping("/del/{soilSampleId}")
+    @BussinessLog(module = LogType.REMOVE_SAMPLE)
     public SuccessResponse del(@PathVariable Long soilSampleId) {
 
+        // 获取到相应的 recordId,便于修改对应的 record 数据状态
         SoilSample soilSample = soilSampleService.getById(soilSampleId);
         Long recordId = soilSample.getRecordId();
 
         boolean remove = soilSampleService.removeById(soilSampleId);
         log.debug("remove={}", remove);
 
+        /*
+            若执行删除后，删除的样本所对应的实验记录下的 样本数为0
+            则将对应 实验记录状态 也同步修改
+         */
         int count = soilSampleService.count(new LambdaQueryWrapper<SoilSample>().eq(SoilSample::getRecordId, recordId));
         LambdaUpdateWrapper<Record> updateWrapper = new LambdaUpdateWrapper<>();
         String newStatus = "待完成";
@@ -119,9 +132,8 @@ public class ApiSoilSampleController {
                     .set(Record::getSubmitTime, null)
                     .set(Record::getStatus, newStatus);
         }
-        boolean update = recordService.update(updateWrapper);
-        log.error("update={}", update);
-
+        boolean updated = recordService.update(updateWrapper);
+        log.debug("updated={}", updated);
         return new SuccessResponse(200);
     }
 }

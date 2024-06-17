@@ -1,5 +1,7 @@
 package com.moshu.trainplatform.controller.api;
 
+import com.moshu.trainplatform.aop.BussinessLog;
+import com.moshu.trainplatform.aop.LogType;
 import com.moshu.trainplatform.constant.exception.BizException;
 import com.moshu.trainplatform.constant.exception.EmBizError;
 import com.moshu.trainplatform.dto.SampleTypeDTO;
@@ -30,7 +32,8 @@ public class ApiSampleTypeController {
     private final SampleTypeService sampleTypeService;
 
     @GetMapping("/list")
-    @RequiresRoles(value = {"admin", "maintain","user"}, logical = Logical.OR)
+    @BussinessLog(module = LogType.LIST_SAMPLE_TYPE)
+    @RequiresRoles(value = {"admin", "maintain", "user"}, logical = Logical.OR)
     public SuccessResponse list() {
         List<SampleType> list = sampleTypeService.list();
         SuccessResponse response = new SuccessResponse(200);
@@ -40,17 +43,20 @@ public class ApiSampleTypeController {
 
     @PostMapping("/add")
     @RequiresRoles("admin")
+    @BussinessLog(module = LogType.ADD_SAMPLE_TYPE)
     public SuccessResponse add(@RequestBody SampleTypeDTO sampleTypeDTO) throws BizException {
 
         validate(sampleTypeDTO);
 
         SampleType sampleType = new SampleType(sampleTypeDTO);
         boolean save = sampleTypeService.save(sampleType);
+        log.debug("save :{}", save);
         return new SuccessResponse(200);
     }
 
     @DeleteMapping("/del/{sampleTypeId}")
     @RequiresRoles("admin")
+    @BussinessLog(module = LogType.REMOVE_SAMPLE_TYPE)
     public SuccessResponse del(@PathVariable Long sampleTypeId) {
         boolean remove = sampleTypeService.removeById(sampleTypeId);
         log.debug("=============remove: {}", remove);
@@ -60,6 +66,7 @@ public class ApiSampleTypeController {
 
     @PutMapping("/update")
     @RequiresRoles("admin")
+    @BussinessLog(module = LogType.UPDATE_SAMPLE_TYPE)
     public SuccessResponse update(@RequestBody SampleTypeDTO sampleTypeDTO) throws BizException {
 
         validate(sampleTypeDTO);
@@ -71,6 +78,12 @@ public class ApiSampleTypeController {
         return new SuccessResponse(200);
     }
 
+    /**
+     * 校验重复数据
+     *
+     * @param sampleTypeDTO 样本类型DTO参数
+     * @throws BizException 自定义异常类
+     */
     private void validate(SampleTypeDTO sampleTypeDTO) throws BizException {
         String sampleTypeName = sampleTypeDTO.getSampleTypeName();
         Set<String> sampleTypeNameList = sampleTypeService.list().stream()

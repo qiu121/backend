@@ -1,6 +1,8 @@
 package com.moshu.trainplatform.controller.api;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.moshu.trainplatform.aop.BussinessLog;
+import com.moshu.trainplatform.aop.LogType;
 import com.moshu.trainplatform.dto.RecordDTO;
 import com.moshu.trainplatform.entity.Record;
 import com.moshu.trainplatform.entity.SoilSample;
@@ -32,6 +34,7 @@ public class ApiRecordController {
 
     @GetMapping("/listRecord")
     @RequiresRoles({"admin"})
+    @BussinessLog(module = LogType.LIST_RECORD)
     public SuccessResponse list() {
         SuccessResponse response = new SuccessResponse(200);
 
@@ -42,6 +45,7 @@ public class ApiRecordController {
 
     @GetMapping("/getRecord/{userId}")
     @RequiresRoles({"user"})
+    @BussinessLog(module = LogType.GET_RECORD_USER_ID)
     public SuccessResponse getRecord(@PathVariable String userId) {
         SuccessResponse response = new SuccessResponse(200);
         List<RecordVO> list = recordService.getRecordByUserId(userId);
@@ -51,6 +55,7 @@ public class ApiRecordController {
 
     @GetMapping("/listRecordByUserId/{userId}")
     @RequiresRoles(value = {"user", "admin"}, logical = Logical.OR)
+    @BussinessLog(module = LogType.LIST_RECORD_DETAIL_USER_ID)
     public SuccessResponse get(@PathVariable String userId) {
 
         List<RecordVO> list = recordService.listRecordByUserId(userId);
@@ -67,6 +72,7 @@ public class ApiRecordController {
      */
     @PostMapping("/add")
     @RequiresRoles(value = {"admin", "user"}, logical = Logical.OR)
+    @BussinessLog(module = LogType.ADD_RECORD)
     public SuccessResponse add(@RequestBody RecordDTO recordDTO) {
 
         Record record = new Record(recordDTO);
@@ -83,6 +89,7 @@ public class ApiRecordController {
      */
     @DeleteMapping("/del/{recordId}")
     @RequiresRoles(value = {"admin", "user"}, logical = Logical.OR)
+    @BussinessLog(module = LogType.REMOVE_RECORD)
     public SuccessResponse del(@PathVariable Long recordId) {
 
         /// 尝试逻辑删除
@@ -106,6 +113,7 @@ public class ApiRecordController {
      */
     @PutMapping("/update")
     @RequiresRoles(value = {"admin", "user"}, logical = Logical.OR)
+    @BussinessLog(module = LogType.UPDATE_RECORD)
     public SuccessResponse update(@RequestBody RecordDTO recordDTO) {
         Record record = new Record(recordDTO);
 
