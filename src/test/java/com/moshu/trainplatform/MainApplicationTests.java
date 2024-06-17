@@ -36,6 +36,7 @@ class MainApplicationTests {
         String password = "admin";
         String md5Pass = DigestUtils.md5DigestAsHex(password.getBytes());
         System.out.println("md5Pass = " + md5Pass);
+        // 21232f297a57a5a743894a0e4a801fc3
         userInfoService.resetPassWord(userInfo, md5Pass);
     }
 

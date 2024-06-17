@@ -32,4 +32,11 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public List<RecordVO> listRecordByUserId(String userId) {
         return recordMapper.listRecordByUserId(userId);
     }
+
+    @Override
+    public List<RecordVO> getRecordByUserId(String userId) {
+        return recordMapper.getRecordByUserId(userId);
+    }
+
+
 }

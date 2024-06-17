@@ -1,5 +1,7 @@
 package com.moshu.trainplatform.controller.api;
 
+import com.moshu.trainplatform.constant.exception.BizException;
+import com.moshu.trainplatform.constant.exception.EmBizError;
 import com.moshu.trainplatform.dto.SampleTypeDTO;
 import com.moshu.trainplatform.entity.SampleType;
 import com.moshu.trainplatform.service.SampleTypeService;
@@ -38,7 +40,7 @@ public class ApiSampleTypeController {
 
     @PostMapping("/add")
     @RequiresRoles("admin")
-    public SuccessResponse add(@RequestBody SampleTypeDTO sampleTypeDTO) {
+    public SuccessResponse add(@RequestBody SampleTypeDTO sampleTypeDTO) throws BizException {
 
         validate(sampleTypeDTO);
 
@@ -58,7 +60,7 @@ public class ApiSampleTypeController {
 
     @PutMapping("/update")
     @RequiresRoles("admin")
-    public SuccessResponse update(@RequestBody SampleTypeDTO sampleTypeDTO) {
+    public SuccessResponse update(@RequestBody SampleTypeDTO sampleTypeDTO) throws BizException {
 
         validate(sampleTypeDTO);
         SampleType sampleType = new SampleType(sampleTypeDTO);
@@ -69,15 +71,15 @@ public class ApiSampleTypeController {
         return new SuccessResponse(200);
     }
 
-    private void validate(SampleTypeDTO sampleTypeDTO) {
+    private void validate(SampleTypeDTO sampleTypeDTO) throws BizException {
         String sampleTypeName = sampleTypeDTO.getSampleTypeName();
         Set<String> sampleTypeNameList = sampleTypeService.list().stream()
                 .map(SampleType::getSampleTypeName)
                 .collect(Collectors.toSet());
 
-        // if (sampleTypeNameList.contains(sampleTypeName)) {
-        //     throw new BizException(EmBizError.DUPLICATE_INSERT_ERROR, EmBizError.DUPLICATE_INSERT_ERROR.getErrMsg());
-        // }
+        if (sampleTypeNameList.contains(sampleTypeName)) {
+            throw new BizException(EmBizError.DUPLICATE_DATA_ERROR);
+        }
     }
 
 }

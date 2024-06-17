@@ -6,7 +6,6 @@
     <select id="listByRecordId" resultType="com.moshu.trainplatform.vo.SoilSampleVO">
         SELECT ss.`id`,
                `sample_name`,
-               `sample_type_id`,
                st.`sample_type_name`,
                `color`,
                `smell`,

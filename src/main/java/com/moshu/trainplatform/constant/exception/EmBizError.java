@@ -35,6 +35,8 @@ public enum EmBizError implements CommonError {
 
     USER_INCORRECT_USERNAME_OR_PASSWORD(30005, "账号或者密码错误!"),
 
+    NOT_ALLOW(30006, "数据不为空，不允许操作！"),
+
     ;
     private final int errCode;
     private String errMsg;

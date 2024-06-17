@@ -27,10 +27,6 @@ public class SoilSampleVO implements Serializable {
      */
     private String sampleName;
     /**
-     * 样本类型id
-     */
-    private String sampleTypeId;
-    /**
      * 样本类型
      */
     private String sampleTypeName;

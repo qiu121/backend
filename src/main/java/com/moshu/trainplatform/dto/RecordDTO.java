@@ -1,12 +1,8 @@
 package com.moshu.trainplatform.dto;
 
-import com.moshu.trainplatform.vo.SoilSampleVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Leo
@@ -16,14 +12,19 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecordDTO implements Serializable {
+public class RecordDTO {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 主键，更新使用
+     */
     private Long id;
-
-    private String username;
+    /**
+     * 用户id
+     */
     private String userId;
-    private List<SoilSampleVO> sampleList;
-
+    /**
+     * 实验记录名称
+     */
+    private String recordName;
 
 }

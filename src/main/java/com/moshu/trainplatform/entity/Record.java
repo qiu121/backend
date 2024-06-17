@@ -1,16 +1,15 @@
 package com.moshu.trainplatform.entity;
 
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.moshu.trainplatform.vo.SoilSampleVO;
+import com.moshu.trainplatform.dto.RecordDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author Leo
@@ -31,10 +30,6 @@ public class Record implements Serializable {
     private Long id;
 
     /**
-     * 填写人用户名(学号)
-     */
-    private String username;
-    /**
      * 记录ID
      */
     private String userId;
@@ -46,16 +41,6 @@ public class Record implements Serializable {
      * 实验记录名称
      */
     private String recordName;
-    /**
-     * 用户下的实验样本数量
-     */
-    @TableField(exist = false)
-    private Integer count;
-    /**
-     * 样本集
-     */
-    @TableField(exist = false)
-    List<SoilSampleVO> sampleList;
     /**
      * 提交时间
      */
@@ -77,6 +62,10 @@ public class Record implements Serializable {
      * 是否删除(0-未删, 1-已删)
      */
     private Integer isDeleted;
+
+    public Record(RecordDTO recordDTO) {
+        BeanUtils.copyProperties(recordDTO, this);
+    }
 
 }
 

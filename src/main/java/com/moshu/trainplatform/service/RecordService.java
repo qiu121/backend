@@ -16,4 +16,7 @@ public interface RecordService extends IService<Record> {
     List<RecordVO> listRecord();
 
     List<RecordVO> listRecordByUserId(String userId);
+
+    List<RecordVO> getRecordByUserId(String userId);
+
 }

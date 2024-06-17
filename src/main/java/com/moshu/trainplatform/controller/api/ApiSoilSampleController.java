@@ -1,5 +1,6 @@
 package com.moshu.trainplatform.controller.api;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moshu.trainplatform.dto.PageDTO;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -44,7 +46,10 @@ public class ApiSoilSampleController {
         Page<SoilSampleVO> page = new Page<>(currentPage, pageSize);
         List<SoilSampleVO> list = soilSampleService.listByRecordId(page, recordId);
         SuccessResponse response = new SuccessResponse(200);
-        response.put("result", list);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("result", list);
+        hashMap.put("total", page.getTotal());
+        response.setData(hashMap);
 
         return response;
     }
@@ -64,7 +69,8 @@ public class ApiSoilSampleController {
         // 更新实验记录提交时间
         LambdaUpdateWrapper<Record> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Record::getId, soilSample.getRecordId())
-                .set(Record::getSubmitTime, LocalDateTime.now());
+                .set(Record::getSubmitTime, LocalDateTime.now())
+                .set(Record::getStatus, "已完成");
         recordService.update(updateWrapper);
 
         return new SuccessResponse(200);
@@ -98,8 +104,24 @@ public class ApiSoilSampleController {
      */
     @DeleteMapping("/del/{soilSampleId}")
     public SuccessResponse del(@PathVariable Long soilSampleId) {
+
+        SoilSample soilSample = soilSampleService.getById(soilSampleId);
+        Long recordId = soilSample.getRecordId();
+
         boolean remove = soilSampleService.removeById(soilSampleId);
         log.debug("remove={}", remove);
+
+        int count = soilSampleService.count(new LambdaQueryWrapper<SoilSample>().eq(SoilSample::getRecordId, recordId));
+        LambdaUpdateWrapper<Record> updateWrapper = new LambdaUpdateWrapper<>();
+        String newStatus = "待完成";
+        if (count == 0) {
+            updateWrapper.eq(Record::getId, recordId)
+                    .set(Record::getSubmitTime, null)
+                    .set(Record::getStatus, newStatus);
+        }
+        boolean update = recordService.update(updateWrapper);
+        log.error("update={}", update);
+
         return new SuccessResponse(200);
     }
 }

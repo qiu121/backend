@@ -1,5 +1,6 @@
 package com.moshu.trainplatform.controller;
 
+import com.moshu.trainplatform.constant.exception.BizException;
 import com.moshu.trainplatform.constant.exception.EmBizError;
 import com.moshu.trainplatform.service.AlarmInfoService;
 import com.moshu.trainplatform.template.ExceptionResponse;
@@ -18,10 +19,18 @@ public class ApiExceptionHandler {
 	
     private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
+    @ExceptionHandler(value = BizException.class)
+    @ResponseBody
+    public ExceptionResponse exceptionHandler(BizException ex) {
+        logger.error(ex.getMessage(), ex);
+        // assert ex != null;
+        return new ExceptionResponse(EmBizError.DUPLICATE_DATA_ERROR);
+    }
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ExceptionResponse exceptionHandler(Exception ex) {
     	logger.error(ex.getMessage(), ex);
+        // assert ex != null;
         return new ExceptionResponse(EmBizError.UNKNOWN_ERROR);
     }
 

@@ -36,6 +36,10 @@ public class RecordVO implements Serializable {
      */
     private int count;
     /**
+     * 样本名称
+     */
+    private String recordName;
+    /**
      * 完成状态
      */
     private String status;

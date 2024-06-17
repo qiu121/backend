@@ -1,23 +1,19 @@
 package com.moshu.trainplatform.controller.api;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.moshu.trainplatform.dto.RecordDTO;
 import com.moshu.trainplatform.entity.Record;
 import com.moshu.trainplatform.entity.SoilSample;
-import com.moshu.trainplatform.entity.UserInfo;
 import com.moshu.trainplatform.service.RecordService;
 import com.moshu.trainplatform.service.SoilSampleService;
 import com.moshu.trainplatform.template.SuccessResponse;
-import com.moshu.trainplatform.utils.UserUtil;
 import com.moshu.trainplatform.vo.RecordVO;
-import com.moshu.trainplatform.vo.SoilSampleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -44,13 +40,18 @@ public class ApiRecordController {
         return response;
     }
 
-    @GetMapping("/listRecordByUserId")
-    @RequiresRoles(value = {"user", "admin"}, logical = Logical.OR)
-    public SuccessResponse get() {
+    @GetMapping("/getRecord/{userId}")
+    @RequiresRoles({"user"})
+    public SuccessResponse getRecord(@PathVariable String userId) {
+        SuccessResponse response = new SuccessResponse(200);
+        List<RecordVO> list = recordService.getRecordByUserId(userId);
+        response.put("result", list);
+        return response;
+    }
 
-        // 条件查询出访问用户的记录
-        UserInfo user = UserUtil.getUserInfoByToken();
-        String userId = user.getUserId();
+    @GetMapping("/listRecordByUserId/{userId}")
+    @RequiresRoles(value = {"user", "admin"}, logical = Logical.OR)
+    public SuccessResponse get(@PathVariable String userId) {
 
         List<RecordVO> list = recordService.listRecordByUserId(userId);
         SuccessResponse response = new SuccessResponse(200);
@@ -61,36 +62,16 @@ public class ApiRecordController {
     /**
      * 添加
      *
-     * @param soilSample 土壤样本
-     * @return 这里获取需要分拆为三个表单(三个样本)/三次提交表单 ✅
+     * @param recordDTO 实验记录
+     * @return result
      */
     @PostMapping("/add")
-    public SuccessResponse add(@RequestBody SoilSample soilSample) {
+    @RequiresRoles(value = {"admin", "user"}, logical = Logical.OR)
+    public SuccessResponse add(@RequestBody RecordDTO recordDTO) {
 
+        Record record = new Record(recordDTO);
 
-        // 记录填写人的 用户名(学号),id主键
-        UserInfo user = UserUtil.getUserInfoByToken();
-        String userName = user.getUserName();
-        String userId = user.getUserId();
-
-        // 记录表，一个用户只需要记录一次,这里不给出重复插入提示，已存在的数据不进行处理，其他正常插入
-        // 如果记录已经存在，获取记录id 作为返回的主键，插入到 soilSample的record_id,将其关联起来
-        Record one = recordService.getOne(new LambdaQueryWrapper<Record>()
-                .eq(true, Record::getUsername, userName));
-        if (one != null) {
-            soilSample.setRecordId(one.getId());
-            soilSampleService.save(soilSample);
-            return new SuccessResponse(200);
-        }
-        // 保存记录
-        Record record = new Record();
-        record.setUsername(userName);
-        record.setUserId(userId);
         recordService.save(record);
-
-        // 保存样本
-        soilSample.setRecordId(record.getId());
-        soilSampleService.save(soilSample);
         return new SuccessResponse(200);
     }
 
@@ -101,44 +82,35 @@ public class ApiRecordController {
      * @return
      */
     @DeleteMapping("/del/{recordId}")
+    @RequiresRoles(value = {"admin", "user"}, logical = Logical.OR)
     public SuccessResponse del(@PathVariable Long recordId) {
 
         /// 尝试逻辑删除
         /// Record record = new Record();
         /// record.setIsDeleted(1);
+        int count = soilSampleService.count(new LambdaUpdateWrapper<SoilSample>()
+                .eq(SoilSample::getRecordId, recordId));
+        if (count != 0) {
+            return new SuccessResponse(403, "数据不为空，不允许操作");
+        }
         boolean remove = recordService.removeById(recordId);
-
-        LambdaQueryWrapper<SoilSample> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SoilSample::getRecordId, recordId);
-        boolean removed = soilSampleService.remove(wrapper);
-
-        log.debug("======执行删除==========：{}", remove && removed);
-
+        log.debug("remove = {}", remove);
         return new SuccessResponse(200);
     }
 
     /**
      * 更新 样本数据
      *
-     * @param soilSample
+     * @param recordDTO
      * @return
      */
     @PutMapping("/update")
+    @RequiresRoles(value = {"admin", "user"}, logical = Logical.OR)
     public SuccessResponse update(@RequestBody RecordDTO recordDTO) {
+        Record record = new Record(recordDTO);
 
-        // 同步更新记录的时间
-        Record record = new Record();
-        record.setId(recordDTO.getId());
-        record.setUpdateTime(LocalDateTime.now());
-
-        log.error("dddddddddddd{}", record);
-        recordService.updateById(record);
-
-        List<SoilSampleVO> sampleList = recordDTO.getSampleList();
-
-        // boolean save = soilSampleService.updateById(soilSample);
-
-        // log.debug("==============更新操作===========：{}",save);
+        boolean update = recordService.updateById(record);
+        log.debug("update = {}", update);
         return new SuccessResponse(200);
 
     }

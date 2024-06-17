@@ -19,4 +19,7 @@ public interface RecordMapper extends BaseMapper<Record> {
     List<RecordVO> listRecord();
 
     List<RecordVO> listRecordByUserId(@Param("userId") String userId);
+
+    List<RecordVO> getRecordByUserId(@Param("userId") String userId);
+
 }

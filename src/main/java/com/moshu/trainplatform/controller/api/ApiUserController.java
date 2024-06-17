@@ -8,9 +8,9 @@ import com.moshu.trainplatform.constant.enumConstant.EmRoleType;
 import com.moshu.trainplatform.constant.exception.EmBizError;
 import com.moshu.trainplatform.dto.UserInfoDTO;
 import com.moshu.trainplatform.entity.Permission;
-import com.moshu.trainplatform.entity.query.UserInfoQuery;
 import com.moshu.trainplatform.entity.UserInfo;
 import com.moshu.trainplatform.entity.UserRole;
+import com.moshu.trainplatform.entity.query.UserInfoQuery;
 import com.moshu.trainplatform.mapper.UserInfoMapper;
 import com.moshu.trainplatform.service.PermissionService;
 import com.moshu.trainplatform.service.RoleService;
@@ -58,8 +58,8 @@ public class ApiUserController {
         //获取用户权限、添加角色
         Integer roleId = userInfo.getRole().getRoleId();
         // 获取当前权限的授权的功能
-        List<Permission> PermissionInfoList = permissionService.getPermissionInfoByReact(roleId);
-        userInfo.setPermissions(PermissionInfoList);
+        List<Permission> permissionInfoList = permissionService.getPermissionInfoByReact(roleId);
+        userInfo.setPermissions(permissionInfoList);
         userInfo.setPassWord("");
         userInfo.setSalt("");
         SuccessResponse sr = new SuccessResponse(200);
@@ -162,7 +162,9 @@ public class ApiUserController {
 
             // 判断是否修改用户账号
             if (StringUtils.isNotBlank(userInfo.getPassWord())) {
-                if (userInfo.getPassWord().length() < 8) return new SuccessResponse(EmBizError.USER_PASSWORD_LENGTH_INSUFFICIENT);
+                if (userInfo.getPassWord().length() < 8) {
+                    return new SuccessResponse(EmBizError.USER_PASSWORD_LENGTH_INSUFFICIENT);
+                }
                 if (!userInfo.getUserName().equals(modifyUserInfo.getUserName())) {
                     // 判断账号是否存在
                     if (userInfoService.getUserByUsername(userInfo.getUserName()) != null) {
@@ -188,11 +190,15 @@ public class ApiUserController {
             // 不为空就更新密码
             if (StringUtils.isNotBlank(userInfo.getPassWord())) {
                 // 判断密码
-                if (userInfo.getPassWord().length() < 8) return new SuccessResponse(EmBizError.USER_PASSWORD_LENGTH_INSUFFICIENT);
+                if (userInfo.getPassWord().length() < 8) {
+                    return new SuccessResponse(EmBizError.USER_PASSWORD_LENGTH_INSUFFICIENT);
+                }
 
                 // 判断旧密码是否正确
                 Object pwd = new SimpleHash("MD5", userInfo.getOldPassWord(), modifyUserInfo.getUserName() + modifyUserInfo.getSalt(), 3);
-                if (!pwd.toString().equals(modifyUserInfo.getPassWord())) return new SuccessResponse(EmBizError.USER_INCORRECT_PASSWORD);
+                if (!pwd.toString().equals(modifyUserInfo.getPassWord())) {
+                    return new SuccessResponse(EmBizError.USER_INCORRECT_PASSWORD);
+                }
 
                 userInfoService.resetPassWord(modifyUserInfo, userInfo.getPassWord());
             }
@@ -212,7 +218,9 @@ public class ApiUserController {
         UserInfo userInfo = UserUtil.getUserInfoByToken();
         if (UserUtil.isRole(EmRoleType.USER.toString())) {
             Object result = new SimpleHash("MD5", userInfoDTO.getOldPwd(), userInfo.getUserName() + userInfo.getSalt(), 3);
-            if (!userInfo.getPassWord().equals(result.toString())) return new SuccessResponse(EmBizError.USER_INCORRECT_PASSWORD);
+            if (!userInfo.getPassWord().equals(result.toString())) {
+                return new SuccessResponse(EmBizError.USER_INCORRECT_PASSWORD);
+            }
         }
 
         // 管理员直接改

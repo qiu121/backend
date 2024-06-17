@@ -3,34 +3,50 @@
 <mapper namespace="com.moshu.trainplatform.mapper.RecordMapper">
 
     <select id="listRecord" resultType="com.moshu.trainplatform.vo.RecordVO">
-        # count(s.id)统计 `soil_sample`.`id`不为空的行数，对应左关联
-        SELECT r.`id`,
-               `username`,
-               `user_id`,
-               COUNT(s.id) AS 'count',
-               `status`,
-               `submit_time`,
-               r.`create_time`,
-               r.`update_time`
-        FROM `record` r
-                 LEFT JOIN `soil_sample` s ON r.`id` = s.`record_id`
-        GROUP BY `username`
+        SELECT u.`user_id`,
+               u.`user_name`        AS username,
+               COUNT(r.`id`)        AS count,
+               MAX(r.`submit_time`) AS submit_time,
+               MIN(r.`create_time`) AS create_time,
+               MAX(r.`update_time`) AS update_time
+        FROM `user_info` u
+                 JOIN `record` r ON u.`user_id` = r.`user_id`
+        GROUP BY u.`user_id`,
+                 `username`
+
     </select>
 
     <select id="listRecordByUserId" resultType="com.moshu.trainplatform.vo.RecordVO" parameterType="java.lang.String">
         SELECT r.`id`,
-               `username`,
-               r.`user_id`,
-               COUNT(s.id) AS 'count',
+               `record_name`,
+               `user_id`,
+               COUNT(s.`id`)      AS count,
                `status`,
-               `submit_time`,
+               MAX(`submit_time`) AS submit_time,
                r.`create_time`,
                r.`update_time`
         FROM `record` r
                  LEFT JOIN `soil_sample` s ON r.`id` = s.`record_id`
         WHERE `user_id` = #{userId}
-        GROUP BY `username`
+        GROUP BY r.`id`
+        ORDER BY submit_time DESC
+
     </select>
+
+    <select id="getRecordByUserId" resultType="com.moshu.trainplatform.vo.RecordVO">
+        SELECT u.`user_id`,
+               u.`user_name`        AS username,
+               COUNT(r.`id`)        AS count,
+               MAX(r.`submit_time`) AS submit_time,
+               MIN(r.`create_time`) AS create_time,
+               MAX(r.`update_time`) AS update_time
+        FROM `user_info` u
+                 JOIN `record` r ON u.`user_id` = r.`user_id`
+        WHERE r.`user_id` = #{userId}
+        GROUP BY u.`user_id`,
+                 `username`
+    </select>
+
 
 
 </mapper>
