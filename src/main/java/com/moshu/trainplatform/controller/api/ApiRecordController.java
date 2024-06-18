@@ -1,8 +1,10 @@
 package com.moshu.trainplatform.controller.api;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moshu.trainplatform.aop.BussinessLog;
 import com.moshu.trainplatform.aop.LogType;
+import com.moshu.trainplatform.dto.PageDTO;
 import com.moshu.trainplatform.dto.RecordDTO;
 import com.moshu.trainplatform.entity.Record;
 import com.moshu.trainplatform.entity.SoilSample;
@@ -16,6 +18,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,35 +35,58 @@ public class ApiRecordController {
     private final RecordService recordService;
     private final SoilSampleService soilSampleService;
 
-    @GetMapping("/listRecord")
+    @PostMapping("/listRecord")
     @RequiresRoles({"admin"})
     @BussinessLog(module = LogType.LIST_RECORD)
-    public SuccessResponse list() {
-        SuccessResponse response = new SuccessResponse(200);
+    public SuccessResponse list(@RequestBody PageDTO pageDTO) {
 
-        List<RecordVO> list = recordService.listRecord();
-        response.put("result", list);
+        long currentPage, pageSize;
+        assert pageDTO != null;
+        currentPage = pageDTO.getCurrentPage();
+        pageSize = pageDTO.getPageSize();
+
+        Page<RecordVO> page = new Page<>(currentPage, pageSize);
+
+        List<RecordVO> list = recordService.listRecord(page);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("result", list);
+        map.put("total", page.getTotal());
+
+        SuccessResponse response = new SuccessResponse(200);
+        response.setData(map);
         return response;
     }
 
-    @GetMapping("/getRecord/{userId}")
+    @PostMapping("/getRecord/{userId}")
     @RequiresRoles({"user"})
     @BussinessLog(module = LogType.GET_RECORD_USER_ID)
-    public SuccessResponse getRecord(@PathVariable String userId) {
+    public SuccessResponse getRecord(@RequestBody PageDTO pageDTO, @PathVariable String userId) {
         SuccessResponse response = new SuccessResponse(200);
-        List<RecordVO> list = recordService.getRecordByUserId(userId);
-        response.put("result", list);
+
+        Page<RecordVO> page = new Page<>(pageDTO.getCurrentPage(), pageDTO.getPageSize());
+        List<RecordVO> list = recordService.getRecordByUserId(page,userId);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("result", list);
+        map.put("total", page.getTotal());
+        response.setData(map);
         return response;
     }
 
-    @GetMapping("/listRecordByUserId/{userId}")
+    @PostMapping("/listRecordByUserId/{userId}")
     @RequiresRoles(value = {"user", "admin"}, logical = Logical.OR)
     @BussinessLog(module = LogType.LIST_RECORD_DETAIL_USER_ID)
-    public SuccessResponse get(@PathVariable String userId) {
+    public SuccessResponse get(@RequestBody PageDTO pageDTO,@PathVariable String userId) {
 
-        List<RecordVO> list = recordService.listRecordByUserId(userId);
+        Page<RecordVO> page= new Page<>();
+        page.setCurrent(pageDTO.getCurrentPage());
+        page.setSize(pageDTO.getPageSize());
+        List<RecordVO> list = recordService.listRecordByUserId(page,userId);
+
         SuccessResponse response = new SuccessResponse(200);
-        response.put("result", list);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("result", list);
+        hashMap.put("total", page.getTotal());
+        response.setData(hashMap);
         return response;
     }
 

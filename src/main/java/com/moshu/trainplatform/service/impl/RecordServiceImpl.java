@@ -1,5 +1,6 @@
 package com.moshu.trainplatform.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.moshu.trainplatform.entity.Record;
 import com.moshu.trainplatform.mapper.RecordMapper;
@@ -24,18 +25,18 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
 
     @Override
-    public List<RecordVO> listRecord() {
-        return recordMapper.listRecord();
+    public List<RecordVO> listRecord(IPage<RecordVO> page) {
+        return recordMapper.listRecord(page);
     }
 
     @Override
-    public List<RecordVO> listRecordByUserId(String userId) {
-        return recordMapper.listRecordByUserId(userId);
+    public List<RecordVO> listRecordByUserId(IPage<RecordVO> page,String userId) {
+        return recordMapper.listRecordByUserId(page,userId);
     }
 
     @Override
-    public List<RecordVO> getRecordByUserId(String userId) {
-        return recordMapper.getRecordByUserId(userId);
+    public List<RecordVO> getRecordByUserId(IPage<RecordVO>page,String userId) {
+        return recordMapper.getRecordByUserId(page,userId);
     }
 
 

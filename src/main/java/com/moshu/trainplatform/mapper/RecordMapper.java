@@ -1,6 +1,7 @@
 package com.moshu.trainplatform.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.moshu.trainplatform.entity.Record;
 import com.moshu.trainplatform.vo.RecordVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,10 +17,10 @@ import java.util.List;
 @Mapper
 public interface RecordMapper extends BaseMapper<Record> {
 
-    List<RecordVO> listRecord();
+    List<RecordVO> listRecord(IPage<RecordVO> page);
 
-    List<RecordVO> listRecordByUserId(@Param("userId") String userId);
+    List<RecordVO> listRecordByUserId(IPage<RecordVO> page, @Param("userId") String userId);
 
-    List<RecordVO> getRecordByUserId(@Param("userId") String userId);
+    List<RecordVO> getRecordByUserId(IPage<RecordVO> page, @Param("userId") String userId);
 
 }

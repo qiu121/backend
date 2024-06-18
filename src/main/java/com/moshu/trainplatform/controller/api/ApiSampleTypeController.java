@@ -1,9 +1,12 @@
 package com.moshu.trainplatform.controller.api;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moshu.trainplatform.aop.BussinessLog;
 import com.moshu.trainplatform.aop.LogType;
 import com.moshu.trainplatform.constant.exception.BizException;
 import com.moshu.trainplatform.constant.exception.EmBizError;
+import com.moshu.trainplatform.dto.PageDTO;
 import com.moshu.trainplatform.dto.SampleTypeDTO;
 import com.moshu.trainplatform.entity.SampleType;
 import com.moshu.trainplatform.service.SampleTypeService;
@@ -14,7 +17,6 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,13 +33,17 @@ public class ApiSampleTypeController {
 
     private final SampleTypeService sampleTypeService;
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @BussinessLog(module = LogType.LIST_SAMPLE_TYPE)
     @RequiresRoles(value = {"admin", "maintain", "user"}, logical = Logical.OR)
-    public SuccessResponse list() {
-        List<SampleType> list = sampleTypeService.list();
+    public SuccessResponse list(@RequestBody PageDTO pageDTO) {
+
+        Page<SampleType> page = new Page<>(pageDTO.getCurrentPage(), pageDTO.getPageSize());
+        Page<SampleType> typePage = sampleTypeService.page(page, new QueryWrapper<>());
+
         SuccessResponse response = new SuccessResponse(200);
-        response.put("result", list);
+        response.put("result", typePage.getRecords());
+        response.put("total", typePage.getTotal());
         return response;
     }
 
