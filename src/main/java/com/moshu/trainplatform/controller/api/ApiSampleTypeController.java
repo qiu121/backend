@@ -36,9 +36,15 @@ public class ApiSampleTypeController {
     @PostMapping("/list")
     @BussinessLog(module = LogType.LIST_SAMPLE_TYPE)
     @RequiresRoles(value = {"admin", "maintain", "user"}, logical = Logical.OR)
-    public SuccessResponse list(@RequestBody PageDTO pageDTO) {
+    public SuccessResponse list(@RequestBody(required = false) PageDTO pageDTO) {
 
-        Page<SampleType> page = new Page<>(pageDTO.getCurrentPage(), pageDTO.getPageSize());
+        Page<SampleType> page;
+        if (pageDTO != null && pageDTO.getCurrentPage() != null && pageDTO.getPageSize() != null) {
+            page = new Page<>(pageDTO.getCurrentPage(), pageDTO.getPageSize());
+
+        } else {
+            page = new Page<>();
+        }
         Page<SampleType> typePage = sampleTypeService.page(page, new QueryWrapper<>());
 
         SuccessResponse response = new SuccessResponse(200);
