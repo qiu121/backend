@@ -1,7 +1,7 @@
 package com.moshu.trainplatform.constant.enumConstant;
 
 public enum EmRoleType {
-    ADMIN("manager", 0),
+    ADMIN("admin", 0),
     MAINTAIN("maintain", 1),
     USER("user", 2)
     ;
