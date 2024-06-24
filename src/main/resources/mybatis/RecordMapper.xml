@@ -41,10 +41,11 @@
                MIN(r.`create_time`) AS create_time,
                MAX(r.`update_time`) AS update_time
         FROM `user_info` u
-                 JOIN `record` r ON u.`user_id` = r.`user_id`
-        WHERE r.`user_id` = #{userId}
+                 LEFT JOIN `record` r ON u.`user_id` = r.`user_id`
+        WHERE u.`user_id` = #{userId}
         GROUP BY u.`user_id`,
                  `username`
+
     </select>
 
 
