@@ -48,7 +48,7 @@ public class Books implements Serializable {
     /**
      * 出版年份
      */
-    private LocalDate publishYear;
+    private LocalDate publishDate;
 
     /**
      * 分类
