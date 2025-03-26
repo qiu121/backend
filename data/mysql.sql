@@ -183,7 +183,7 @@ CREATE TABLE `permission` (
   `data_access` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`permission_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,7 +192,7 @@ CREATE TABLE `permission` (
 
 LOCK TABLES `permission` WRITE;
 /*!40000 ALTER TABLE `permission` DISABLE KEYS */;
-INSERT INTO `permission` VALUES (1,'AccountManagement','账号管理',NULL,NULL,NULL,NULL),(2,'other','其他',NULL,NULL,NULL,NULL),(3,'user','个人中心',NULL,NULL,NULL,NULL),(4,'MyProject','我的项目',NULL,NULL,NULL,NULL),(5,'MyProduct','供货列表',NULL,NULL,NULL,NULL),(6,'Management','维护权限',NULL,NULL,NULL,NULL),(7,'Book','图书列表',NULL,NULL,NULL,NULL),(8,'MyBorrow','我的借阅',NULL,NULL,NULL,NULL);
+INSERT INTO `permission` VALUES (1,'AccountManagement','账号管理',NULL,NULL,NULL,NULL),(2,'other','其他',NULL,NULL,NULL,NULL),(3,'user','个人中心',NULL,NULL,NULL,NULL),(4,'MyProject','我的项目',NULL,NULL,NULL,NULL),(5,'MyProduct','供货列表',NULL,NULL,NULL,NULL),(6,'Management','维护权限',NULL,NULL,NULL,NULL),(7,'Book','图书列表',NULL,NULL,NULL,NULL),(8,'MyBorrow','我的借阅',NULL,NULL,NULL,NULL),(9,'BorrowManagement','借阅管理',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -291,7 +291,7 @@ CREATE TABLE `role_permission` (
   `permission_id` int NOT NULL COMMENT '功能ID',
   `role_id` int NOT NULL COMMENT '权限id',
   PRIMARY KEY (`role_permission_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -300,7 +300,7 @@ CREATE TABLE `role_permission` (
 
 LOCK TABLES `role_permission` WRITE;
 /*!40000 ALTER TABLE `role_permission` DISABLE KEYS */;
-INSERT INTO `role_permission` VALUES (43,1,0),(44,2,0),(45,3,0),(46,2,1),(47,3,1),(48,6,1),(49,3,2),(50,4,2),(51,5,2),(52,7,2),(53,7,1),(54,7,0),(55,8,2);
+INSERT INTO `role_permission` VALUES (43,1,0),(44,2,0),(45,3,0),(46,2,1),(47,3,1),(48,6,1),(49,3,2),(50,4,2),(51,5,2),(52,7,2),(53,7,1),(54,7,0),(55,8,2),(56,9,0);
 /*!40000 ALTER TABLE `role_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -442,4 +442,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-26  0:37:22
+-- Dump completed on 2025-03-27  0:17:47

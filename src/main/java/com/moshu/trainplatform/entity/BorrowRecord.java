@@ -1,6 +1,7 @@
 package com.moshu.trainplatform.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -37,10 +38,16 @@ public class BorrowRecord implements Serializable {
      */
     private String userId;
 
+    @TableField(exist = false)
+    private String userName;
+
     /**
      * 图书ID
      */
     private Long bookId;
+
+    @TableField(exist = false)
+    private String bookName;
 
     /**
      * 借阅时间
