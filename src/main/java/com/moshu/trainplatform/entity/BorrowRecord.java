@@ -30,8 +30,8 @@ public class BorrowRecord implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "borrow_record_id", type = IdType.AUTO)
+    private Long borrowRecordId;
 
     /**
      * 借阅用户ID

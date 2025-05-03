@@ -9,14 +9,12 @@ import com.moshu.trainplatform.entity.BorrowRecord;
 import com.moshu.trainplatform.service.IBooksService;
 import com.moshu.trainplatform.service.IBorrowRecordService;
 import com.moshu.trainplatform.template.SuccessResponse;
-import com.moshu.trainplatform.vo.RecordVO;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
-import java.util.List;
 
 /**
 * @author to_Geek
@@ -51,9 +49,8 @@ public class BooksController {
 
     @PostMapping("/borrowBooks")
     @RequiresRoles("user")
-    public SuccessResponse listBooks(@RequestBody BorrowDTO borrowDTO) {
+    public SuccessResponse borrowBooks(@RequestBody BorrowDTO borrowDTO) {
 
-        System.out.println("borrowDTO = " + borrowDTO);
 
         SuccessResponse response = new SuccessResponse(200);
 

@@ -14,7 +14,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.awt.print.Book;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,4 +82,46 @@ public class BorrowRecordController {
         return response;
     }
 
+    @PutMapping("/updateBorrowRecord")
+    @RequiresRoles("user")
+    @ResponseBody
+    public SuccessResponse updateBorrowRecord(String userId, String borrowRecordId) {
+        SuccessResponse response = new SuccessResponse(200);
+        List<BorrowRecord> list = borrowRecordService.list(new LambdaQueryWrapper<BorrowRecord>()
+                .eq(BorrowRecord::getUserId, userId)
+                .eq(BorrowRecord::getBorrowRecordId, borrowRecordId));
+        if (list.isEmpty()) {
+            response.setMsg("数据不存在");
+        } else {
+            BorrowRecord borrowRecord = list.get(0);
+            if ((borrowRecord.getStatus() != null && borrowRecord.getStatus().equals((byte) 2))) {
+                response.setMsg("图书状态已归还");
+            } else if ((borrowRecord.getStatus() != null && borrowRecord.getStatus().equals((byte) 3))) {
+                response.setMsg("图书已逾期");
+            } else {
+                //修改图书状态和更新时间
+                borrowRecord.setStatus(Byte.valueOf("2"));
+                borrowRecord.setActualReturnTime(LocalDateTime.now());
+                borrowRecordService.updateById(borrowRecord);
+                //修改图书库存
+                Books books = booksService.getOne(new LambdaQueryWrapper<Books>()
+                        .eq(Books::getBookId, borrowRecord.getBookId()));
+                if (books == null) {
+                    response.setMsg("图书不存在");
+                    response.setCode(400);
+                    return response;
+                } else {
+                    books.setStock(books.getStock() + 1);
+                    books.setUpdateTime(LocalDateTime.now());
+                    booksService.updateById(books);
+                    response.setMsg("归还成功");
+                    response.setCode(200);
+                }
+
+                response.setCode(200);
+
+            }
+        }
+        return response;
+    }
 }
