@@ -82,46 +82,49 @@ public class BorrowRecordController {
         return response;
     }
 
+    /**
+     * 归还图书
+     *
+     * @param userId         用户ID
+     * @param borrowRecordId 借阅记录ID
+     * @return
+     */
     @PutMapping("/updateBorrowRecord")
     @RequiresRoles("user")
     @ResponseBody
     public SuccessResponse updateBorrowRecord(String userId, String borrowRecordId) {
         SuccessResponse response = new SuccessResponse(200);
-        List<BorrowRecord> list = borrowRecordService.list(new LambdaQueryWrapper<BorrowRecord>()
+        BorrowRecord borrowRecord = borrowRecordService.getOne(new LambdaQueryWrapper<BorrowRecord>()
                 .eq(BorrowRecord::getUserId, userId)
                 .eq(BorrowRecord::getBorrowRecordId, borrowRecordId));
-        if (list.isEmpty()) {
+        if (borrowRecord == null) {
             response.setMsg("数据不存在");
-        } else {
-            BorrowRecord borrowRecord = list.get(0);
-            if ((borrowRecord.getStatus() != null && borrowRecord.getStatus().equals((byte) 2))) {
-                response.setMsg("图书状态已归还");
-            } else if ((borrowRecord.getStatus() != null && borrowRecord.getStatus().equals((byte) 3))) {
-                response.setMsg("图书已逾期");
-            } else {
-                //修改图书状态和更新时间
-                borrowRecord.setStatus(Byte.valueOf("2"));
-                borrowRecord.setActualReturnTime(LocalDateTime.now());
-                borrowRecordService.updateById(borrowRecord);
-                //修改图书库存
-                Books books = booksService.getOne(new LambdaQueryWrapper<Books>()
-                        .eq(Books::getBookId, borrowRecord.getBookId()));
-                if (books == null) {
-                    response.setMsg("图书不存在");
-                    response.setCode(400);
-                    return response;
-                } else {
-                    books.setStock(books.getStock() + 1);
-                    books.setUpdateTime(LocalDateTime.now());
-                    booksService.updateById(books);
-                    response.setMsg("归还成功");
-                    response.setCode(200);
-                }
-
-                response.setCode(200);
-
-            }
+            response.setCode(400);
+            return response;
         }
+        //当前时间和预计归还时间比较
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isAfter(borrowRecord.getExpectReturnTime().atStartOfDay())) {
+            //逾期归还
+            borrowRecord.setStatus(Byte.valueOf("3"));
+        } else {
+            //正常归还
+            borrowRecord.setStatus(Byte.valueOf("2"));
+        }
+        borrowRecord.setActualReturnTime(now);
+        borrowRecordService.updateById(borrowRecord);
+        //修改图书库存
+        Books books = booksService.getOne(new LambdaQueryWrapper<Books>()
+                .eq(Books::getBookId, borrowRecord.getBookId()));
+        if (books == null) {
+            response.setMsg("图书不存在");
+            response.setCode(400);
+            return response;
+        }
+        books.setStock(books.getStock() + 1);
+        books.setUpdateTime(LocalDateTime.now());
+        booksService.updateById(books);
+        response.setMsg("归还成功");
         return response;
     }
 }

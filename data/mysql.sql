@@ -11,7 +11,7 @@
  Target Server Version : 80012 (8.0.12)
  File Encoding         : 65001
 
- Date: 03/05/2025 16:30:42
+ Date: 05/05/2025 02:41:43
 */
 
 SET NAMES utf8mb4;
@@ -52,34 +52,27 @@ CREATE TABLE `books`  (
                           `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
                           `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                           PRIMARY KEY (`book_id`) USING BTREE,
-                          UNIQUE INDEX `uk_book_title`(`title` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 109 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '图书表' ROW_FORMAT = Dynamic;
+                          UNIQUE INDEX `uk_book_title_author_publisher`(`title` ASC, `author` ASC, `publisher` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 110 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '图书表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of books
 -- ----------------------------
-INSERT INTO `books` VALUES (73, '红楼梦', '曹雪芹', '中华书局', '1791-01-01', '文学', 0, '2025-03-26 00:28:12', '2025-05-03 00:04:45');
-INSERT INTO `books` VALUES (74, '三国演义', '罗贯中', '人民文学出版社', '1522-01-01', '文学', 24, '2025-03-26 00:28:12', '2025-05-03 10:58:24');
+INSERT INTO `books`
+VALUES (73, '红楼梦', '曹雪芹', '中华书局', '1791-01-01', '文学', 1, '2025-03-26 00:28:12', '2025-05-05 02:26:08');
+INSERT INTO `books`
+VALUES (74, '三国演义', '罗贯中', '人民文学出版社', '1522-01-01', '文学', 23, '2025-03-26 00:28:12',
+        '2025-05-03 10:58:24');
 INSERT INTO `books` VALUES (75, '西游记', '吴承恩', '中华书局', '1592-01-01', '文学', 20, '2025-03-26 00:28:12', '2025-05-03 10:58:10');
-INSERT INTO `books` VALUES (76, '水浒传', '施耐庵', '人民文学出版社', '1589-01-01', '文学', 18, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (77, '百年孤独', '加西亚·马尔克斯', '南海出版公司', '1967-06-01', '文学', 15, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (78, '追风筝的人', '卡勒德·胡赛尼', '上海人民出版社', '2003-05-01', '文学', 22, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (79, '小王子', '安托万·德·圣-埃克苏佩里', '人民文学出版社', '1943-04-01', '文学', 35, '2025-03-26 00:28:12', '2025-05-03 11:00:29');
-INSERT INTO `books` VALUES (80, '哈利·波特与魔法石', 'J.K. 罗琳', '人民文学出版社', '1997-06-01', '文学', 28, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (81, '傲慢与偏见', '简·奥斯汀', '译林出版社', '1813-01-01', '文学', 12, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (82, '悲惨世界', '维克多·雨果', '译林出版社', '1862-04-01', '文学', 10, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (83, '全球通史', '斯塔夫里阿诺斯', '北京大学出版社', '2006-05-01', '历史', 15, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (84, '人类简史', '尤瓦尔·赫拉利', '中信出版社', '2014-10-01', '历史', 18, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (85, '明朝那些事儿', '当年明月', '中国友谊出版公司', '2006-01-01', '历史', 20, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (86, '万历十五年', '黄仁宇', '中华书局', '1982-06-01', '历史', 13, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (87, '大秦帝国', '孙皓晖', '作家出版社', '2001-08-01', '历史', 11, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (88, '资本论', '卡尔·马克思', '人民出版社', '1867-09-01', '经济', 10, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (89, '国富论', '亚当·斯密', '商务印书馆', '1776-01-01', '经济', 8, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (90, '穷爸爸富爸爸', '罗伯特·清崎', '四川人民出版社', '1997-04-01', '经济', 30, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (91, '经济学原理', '曼昆', '机械工业出版社', '1998-07-01', '经济', 22, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (92, '苏菲的世界', '乔斯坦·贾德', '作家出版社', '1991-12-01', '哲学', 12, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (93, '沉思录', '马可·奥勒留', '中华书局', '0180-01-01', '哲学', 14, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (94, '道德经', '老子', '中华书局', NULL, '哲学', 25, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
+INSERT INTO `books`
+VALUES (77, '百年孤独', '加西亚·马尔克斯', '南海出版公司', '1967-06-01', '文学', 14, '2025-03-26 00:28:12',
+        '2025-05-02 23:37:27');
+INSERT INTO `books`
+VALUES (79, '小王子', '安托万·德·圣-埃克苏佩里', '人民文学出版社', '1943-04-01', '文学', 38, '2025-03-26 00:28:12',
+        '2025-05-05 02:20:27');
+INSERT INTO `books`
+VALUES (81, '傲慢与偏见', '简·奥斯汀', '译林出版社', '1813-01-01', '文学', 12, '2025-03-26 00:28:12',
+        '2025-05-03 22:23:44');
 INSERT INTO `books` VALUES (95, '存在与时间', '马丁·海德格尔', '商务印书馆', '1927-01-01', '哲学', 10, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` VALUES (96, '时间简史', '史蒂芬·霍金', '湖南科学技术出版社', '1988-04-01', '科学', 19, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` VALUES (97, '宇宙的结构', '布赖恩·格林', '湖南科学技术出版社', '2003-07-01', '科学', 15, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
@@ -89,11 +82,8 @@ INSERT INTO `books` VALUES (100, '乌合之众', '古斯塔夫·勒庞', '中央
 INSERT INTO `books` VALUES (101, '影响力', '罗伯特·西奥迪尼', '中国财政经济出版社', '1984-01-01', '心理学', 20, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` VALUES (102, '社会性动物', '艾略特·阿伦森', '华东师范大学出版社', '1972-01-01', '心理学', 18, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` VALUES (103, '乔布斯传', '沃尔特·艾萨克森', '中信出版社', '2011-10-01', '传记', 25, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (104, '巴菲特之道', '罗伯特·哈格斯特朗', '机械工业出版社', '1994-07-01', '传记', 20, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (105, '拿破仑传', '埃米尔·路德维希', '译林出版社', '1927-01-01', '传记', 12, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (106, '艺术的故事', '贡布里希', '广西美术出版社', '1950-07-01', '艺术', 10, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (107, '西方美学史', '朱光潜', '商务印书馆', '1985-01-01', '艺术', 15, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` VALUES (108, '摄影的艺术', '安塞尔·亚当斯', '人民美术出版社', '1983-06-01', '艺术', 18, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
+INSERT INTO `books`
+VALUES (109, 'dada', 'www', 'dadad', '2025-05-01', 'dadad', 1, '2025-05-05 01:56:14', '2025-05-05 02:22:31');
 
 -- ----------------------------
 -- Table structure for borrow_record
@@ -114,7 +104,7 @@ CREATE TABLE `borrow_record`  (
                                   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
                                   INDEX `idx_book_id`(`book_id` ASC) USING BTREE,
                                   INDEX `idx_status`(`status` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '图书借阅记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '图书借阅记录表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of borrow_record
@@ -126,7 +116,21 @@ INSERT INTO `borrow_record` VALUES (4, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 7
 INSERT INTO `borrow_record` VALUES (5, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 74, '2025-05-11 00:00:00', '2025-05-18 00:00:00', '2025-05-03 10:58:24', 2, '2025-05-03 00:07:18', '2025-05-03 00:07:18', 0);
 INSERT INTO `borrow_record` VALUES (6, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 75, '2025-05-01 00:00:00', '2025-05-25 00:00:00', '2025-05-03 10:58:10', 2, '2025-05-03 10:56:22', '2025-05-03 10:56:22', 0);
 INSERT INTO `borrow_record` VALUES (7, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 79, '2025-05-10 00:00:00', '2025-05-25 00:00:00', '2025-05-03 11:00:29', 2, '2025-05-03 11:00:23', '2025-05-03 11:00:23', 0);
-INSERT INTO `borrow_record` VALUES (8, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 73, '2025-04-30 00:00:00', '2025-05-16 00:00:00', NULL, 1, '2025-05-03 11:07:41', '2025-05-03 11:07:41', 0);
+INSERT INTO `borrow_record`
+VALUES (8, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 73, '2025-04-30 00:00:00', '2025-05-16 00:00:00',
+        '2025-05-05 02:26:08', 2, '2025-05-03 11:07:41', '2025-05-03 11:07:41', 0);
+INSERT INTO `borrow_record`
+VALUES (9, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 74, '2025-05-01 00:00:00', '2025-05-11 00:00:00', NULL, 1,
+        '2025-05-03 20:49:09', '2025-05-03 20:49:09', 0);
+INSERT INTO `borrow_record`
+VALUES (10, '189f4fa2-9d1c-456b-83d4-0b4f6c89ba1e', 77, '2025-04-30 00:00:00', '2025-05-10 00:00:00', NULL, 1,
+        '2025-05-03 20:56:38', '2025-05-03 20:56:38', 0);
+INSERT INTO `borrow_record`
+VALUES (11, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 81, '2025-04-29 00:00:00', '2025-05-10 00:00:00',
+        '2025-05-03 22:23:44', 2, '2025-05-03 22:23:23', '2025-05-03 22:23:23', 0);
+INSERT INTO `borrow_record`
+VALUES (12, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 109, '2025-04-28 00:00:00', '2025-05-01 00:00:00',
+        '2025-05-05 02:22:31', 3, '2025-05-05 02:21:47', '2025-05-05 02:21:47', 0);
 
 -- ----------------------------
 -- Table structure for file_info
@@ -161,7 +165,7 @@ CREATE TABLE `log`  (
                         `params` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '请求参数',
                         `create_time` datetime NULL DEFAULT NULL COMMENT '日志的时间',
                         PRIMARY KEY (`log_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 127 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 399 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of log
@@ -180,7 +184,7 @@ CREATE TABLE `permission`  (
                                `data_access` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
                                `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
                                PRIMARY KEY (`permission_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of permission
@@ -194,6 +198,8 @@ INSERT INTO `permission` VALUES (6, 'Management', '维护权限', NULL, NULL, NU
 INSERT INTO `permission` VALUES (7, 'Book', '图书列表', NULL, NULL, NULL, NULL);
 INSERT INTO `permission` VALUES (8, 'MyBorrow', '我的借阅', NULL, NULL, NULL, NULL);
 INSERT INTO `permission` VALUES (9, 'BorrowManagement', '借阅管理', NULL, NULL, NULL, NULL);
+INSERT INTO `permission`
+VALUES (10, 'BookManagement', '图书管理', NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for permission_action
@@ -289,7 +295,7 @@ CREATE TABLE `role_permission`  (
                                     `permission_id` int(11) NOT NULL COMMENT '功能ID',
                                     `role_id` int(11) NOT NULL COMMENT '权限id',
                                     PRIMARY KEY (`role_permission_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 57 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_permission
@@ -305,9 +311,10 @@ INSERT INTO `role_permission` VALUES (50, 4, 2);
 INSERT INTO `role_permission` VALUES (51, 5, 2);
 INSERT INTO `role_permission` VALUES (52, 7, 2);
 INSERT INTO `role_permission` VALUES (53, 7, 1);
-INSERT INTO `role_permission` VALUES (54, 7, 0);
 INSERT INTO `role_permission` VALUES (55, 8, 2);
 INSERT INTO `role_permission` VALUES (56, 9, 0);
+INSERT INTO `role_permission`
+VALUES (57, 10, 0);
 
 -- ----------------------------
 -- Table structure for sample_type
