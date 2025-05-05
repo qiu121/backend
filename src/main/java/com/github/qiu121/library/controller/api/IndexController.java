@@ -82,8 +82,10 @@ public class IndexController {
             // 保存token 对应的账号
             String token = JwtUtils.createToken(user.getUserName(), user.getPassWord());
             Map<String, String> userMap = new HashMap<>();
-            userInfo.setPassWord("");
-            userInfo.setSalt("");
+
+            // TODO:这里不能简单直接将返回的用户信息中的密码置空，会影响数据写入redis,从而影响修改密码等操作 ！！！
+            // userInfo.setPassWord("");
+            // userInfo.setSalt("");
 
             userMap.put("userId", userInfo.getUserId());
             userMap.put("userName", userInfo.getUserName());
