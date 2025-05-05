@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.moshu.trainplatform.mapper.UserInfoMapper" >
+<mapper namespace="com.github.qiu121.library.mapper.UserInfoMapper">
 
-    <select id="getAllUserInfo" resultType="com.moshu.trainplatform.entity.UserInfo">
+    <select id="getAllUserInfo" resultType="com.github.qiu121.library.entity.UserInfo">
         SELECT ui.* FROM user_info ui
-        INNER JOIN user_role ur on ui.user_id  = ur.user_id
+        INNER JOIN user_role ur on ui.user_id = ur.user_id
         <where>
             ui.user_id != #{query.nowUserId}
             <if test="query.userName != null and query.userName != ''">
@@ -29,7 +29,7 @@
 
     <select id="getAllUserInfoCount" resultType="java.lang.Integer">
         SELECT COUNT(ui.user_id) FROM user_info ui
-        INNER JOIN user_role ur on ui.user_id  = ur.user_id
+        INNER JOIN user_role ur on ui.user_id = ur.user_id
         <where>
             ui.user_id != #{query.nowUserId}
             <if test="query.userName != null and query.userName != ''">
