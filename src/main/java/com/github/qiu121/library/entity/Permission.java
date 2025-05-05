@@ -28,7 +28,4 @@ public class Permission {
 
     private String remark;
 
-    @TableField(exist = false)
-    private List<PermissionAction> actionsList;
-
 }

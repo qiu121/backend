@@ -82,6 +82,9 @@ public class IndexController {
             // 保存token 对应的账号
             String token = JwtUtils.createToken(user.getUserName(), user.getPassWord());
             Map<String, String> userMap = new HashMap<>();
+            userInfo.setPassWord("");
+            userInfo.setSalt("");
+
             userMap.put("userId", userInfo.getUserId());
             userMap.put("userName", userInfo.getUserName());
             ops.set(token, userMap, 3, TimeUnit.HOURS);
