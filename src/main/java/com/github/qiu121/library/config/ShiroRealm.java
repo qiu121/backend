@@ -3,7 +3,6 @@ package com.github.qiu121.library.config;
 
 import com.github.qiu121.library.constant.Constant;
 import com.github.qiu121.library.entity.Permission;
-import com.github.qiu121.library.entity.PermissionAction;
 import com.github.qiu121.library.entity.UserInfo;
 import com.github.qiu121.library.service.PermissionService;
 import com.github.qiu121.library.utils.UserUtil;
@@ -52,10 +51,8 @@ public class ShiroRealm extends AuthorizingRealm {
         // 获取角色权限
         List<Permission> permissions = permissionService.getPermissionInfoByReact(userInfo.getRole().getRoleId());
         for (Permission permission : permissions) {
-            List<PermissionAction> permissionsActionsLis = permission.getActionsList();
-            for (PermissionAction permissionAction : permissionsActionsLis) {
-                simpleAuthorizationInfo.addStringPermission(permission.getPermissionCode() + '-' + permissionAction.getActionCode());
-            }
+            simpleAuthorizationInfo.addStringPermission(permission.getPermissionCode());
+
         }
         return simpleAuthorizationInfo;
     }

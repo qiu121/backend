@@ -11,7 +11,7 @@
  Target Server Version : 80041 (8.0.41-0ubuntu0.22.04.1)
  File Encoding         : 65001
 
- Date: 05/05/2025 21:44:31
+ Date: 05/05/2025 23:28:53
 */
 
 SET NAMES utf8mb4;
@@ -54,7 +54,7 @@ INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, 
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (101, '影响力', '罗伯特·西奥迪尼', '中国财政经济出版社', '1984-01-01', '心理学', 20, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (102, '社会性动物', '艾略特·阿伦森', '华东师范大学出版社', '1972-01-01', '心理学', 18, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (103, '乔布斯传', '沃尔特·艾萨克森', '中信出版社', '2011-10-01', '传记', 25, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (109, 'dada', 'www', 'dadad', '2025-05-01', 'dadad', 1, '2025-05-05 01:56:14', '2025-05-05 02:22:31');
+INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (109, 'dada', 'www', 'dadad', '2025-05-01', 'dadad', 0, '2025-05-05 01:56:14', '2025-05-05 02:22:31');
 COMMIT;
 
 -- ----------------------------
@@ -76,7 +76,7 @@ CREATE TABLE `borrow_record` (
   KEY `idx_user_id` (`user_id`) USING BTREE,
   KEY `idx_book_id` (`book_id`) USING BTREE,
   KEY `idx_status` (`status`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='图书借阅记录表';
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='图书借阅记录表';
 
 -- ----------------------------
 -- Records of borrow_record
@@ -94,6 +94,7 @@ INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_t
 INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (10, '189f4fa2-9d1c-456b-83d4-0b4f6c89ba1e', 77, '2025-04-30 00:00:00', '2025-05-10 00:00:00', NULL, 1, '2025-05-03 20:56:38', '2025-05-03 20:56:38', 0);
 INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (11, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 81, '2025-04-29 00:00:00', '2025-05-10 00:00:00', '2025-05-03 22:23:44', 2, '2025-05-03 22:23:23', '2025-05-03 22:23:23', 0);
 INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (12, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 109, '2025-04-28 00:00:00', '2025-05-01 00:00:00', '2025-05-05 02:22:31', 3, '2025-05-05 02:21:47', '2025-05-05 02:21:47', 0);
+INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (13, '6129d161-f38b-4022-9440-da07134df815', 109, '2025-05-11 00:00:00', '2025-05-11 00:00:00', NULL, 1, '2025-05-05 22:14:18', '2025-05-05 22:14:18', 0);
 COMMIT;
 
 -- ----------------------------
@@ -110,7 +111,7 @@ CREATE TABLE `log` (
   `params` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci COMMENT '请求参数',
   `create_time` datetime DEFAULT NULL COMMENT '日志的时间',
   PRIMARY KEY (`log_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=417 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=525 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of log
@@ -138,59 +139,12 @@ CREATE TABLE `permission` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (1, 'AccountManagement', '账号管理', NULL, NULL, NULL, NULL);
-INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (2, 'other', '其他', NULL, NULL, NULL, NULL);
-INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (3, 'user', '个人中心', NULL, NULL, NULL, NULL);
-INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (4, 'MyProject', '我的项目', NULL, NULL, NULL, NULL);
-INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (5, 'MyProduct', '供货列表', NULL, NULL, NULL, NULL);
-INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (6, 'Management', '维护权限', NULL, NULL, NULL, NULL);
+INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (2, 'Other', '其他', NULL, NULL, NULL, NULL);
+INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (3, 'UserInfo', '个人中心', NULL, NULL, NULL, NULL);
 INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (7, 'Book', '图书列表', NULL, NULL, NULL, NULL);
 INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (8, 'MyBorrow', '我的借阅', NULL, NULL, NULL, NULL);
 INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (9, 'BorrowManagement', '借阅管理', NULL, NULL, NULL, NULL);
 INSERT INTO `permission` (`permission_id`, `permission_code`, `permission_name`, `permission_ename`, `action_list`, `data_access`, `remark`) VALUES (10, 'BookManagement', '图书管理', NULL, NULL, NULL, NULL);
-COMMIT;
-
--- ----------------------------
--- Table structure for permission_action
--- ----------------------------
-DROP TABLE IF EXISTS `permission_action`;
-CREATE TABLE `permission_action` (
-  `action_id` int NOT NULL AUTO_INCREMENT COMMENT '功能详情表',
-  `permission_id` int NOT NULL COMMENT '功能表id',
-  `action_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '方法code',
-  `default_check` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `describes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '中文名字',
-  PRIMARY KEY (`action_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Records of permission_action
--- ----------------------------
-BEGIN;
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (43, 1, 'add', 'false', '添加');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (44, 1, 'get', 'false', '详情');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (45, 1, 'export', 'false', '导出');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (46, 1, 'del', 'false', '删除');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (47, 2, 'add', 'false', '添加');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (48, 2, 'get', 'false', '详情');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (49, 2, 'export', 'false', '导出');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (50, 2, 'del', 'false', '删除');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (51, 3, 'add', 'false', '添加');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (52, 3, 'add', 'false', '添加');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (53, 3, 'get', 'false', '详情');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (54, 3, 'export', 'false', '导出');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (55, 3, 'del', 'false', '删除');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (56, 4, 'del', 'false', '删除');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (57, 4, 'export', 'false', '导出');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (58, 4, 'get', 'false', '详情');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (59, 4, 'add', 'false', '添加');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (60, 5, 'add', 'false', '添加');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (61, 5, 'get', 'false', '详情');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (62, 5, 'export', 'false', '导出');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (63, 5, 'del', 'false', '删除');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (64, 6, 'add', 'false', '添加');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (65, 6, 'get', 'false', '详情');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (66, 6, 'export', 'false', '导出');
-INSERT INTO `permission_action` (`action_id`, `permission_id`, `action_code`, `default_check`, `describes`) VALUES (67, 6, 'del', 'false', '删除');
 COMMIT;
 
 -- ----------------------------
@@ -268,6 +222,7 @@ BEGIN;
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('1888dee2-c173-48e0-ac2c-e5a043dec7d4', 'admin', '系统管理员', '9c91e85e5f8f26f3e4002d839cfcfcbc', 'b581e52d-8e35-4390-abbf-1968403af525', '12345678', '12345678', 1, '2024-03-06 16:03:25');
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('189f4fa2-9d1c-456b-83d4-0b4f6c89ba1e', 'shanghai123', '123', '97446b776d94c3b907c59bbc224e5a30', '40f9c810-15a9-40cf-a604-68bd219ac15e', '123456', '123456', 1, '2024-06-14 14:02:48');
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('554c9e86-e577-4bfb-891d-45fd14723e1a', 'maintain', '维护人员', 'ccdf5ef6227ca812583fd8b58e8e29de', '450fba82-a565-47f2-a2c5-26d3f6ebb13a', '12345678', '123456789', 1, '2024-06-06 12:37:57');
+INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('6129d161-f38b-4022-9440-da07134df815', 'test', 'test', '46329ea869014d3e781b579854e3e381', 'a1d449b9-d141-4b69-9353-0a593f059695', '11111111111111111', '1111111111111111111', 1, '2025-05-05 22:13:55');
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('e5fbd029-b4b0-4f12-8679-510ef9695be3', 'user', '用户', '17d5e423900efcd06d1997eca49642a5', '2a874930-a0d0-4fe3-9772-a1e1ebf02656', '12345678', '1111', 1, '2024-06-06 12:38:35');
 COMMIT;
 
@@ -292,6 +247,7 @@ CREATE TABLE `user_role` (
 BEGIN;
 INSERT INTO `user_role` (`user_role_id`, `user_id`, `role_id`) VALUES ('1', '1888dee2-c173-48e0-ac2c-e5a043dec7d4', 0);
 INSERT INTO `user_role` (`user_role_id`, `user_id`, `role_id`) VALUES ('2f9684b0-ff99-4c2d-b5b1-631230b9bcaa', '554c9e86-e577-4bfb-891d-45fd14723e1a', 1);
+INSERT INTO `user_role` (`user_role_id`, `user_id`, `role_id`) VALUES ('94ef1bf1-ac15-40ad-b5b0-ef2627601898', '6129d161-f38b-4022-9440-da07134df815', 2);
 INSERT INTO `user_role` (`user_role_id`, `user_id`, `role_id`) VALUES ('cf7fc751-6b29-4932-acfb-942b433b53ef', 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 2);
 INSERT INTO `user_role` (`user_role_id`, `user_id`, `role_id`) VALUES ('e082fe57-3a53-4c66-9603-fbc3958763bd', '189f4fa2-9d1c-456b-83d4-0b4f6c89ba1e', 2);
 COMMIT;
