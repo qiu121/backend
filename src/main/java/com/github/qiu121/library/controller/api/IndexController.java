@@ -46,8 +46,8 @@ public class IndexController {
     @ResponseBody
     @BusinessLog(module = LogType.LOG_OUT)
     public SuccessResponse loginOut() {
-        redisTemplate.delete(TokenUtil.getToken());
         redisTemplate.delete(Constant.SYSTEM_CODE + UserUtil.getUserInfoByToken().getUserId());
+        redisTemplate.delete(TokenUtil.getToken());
         return new SuccessResponse(200);
     }
 
