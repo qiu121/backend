@@ -3,15 +3,15 @@
 
  Source Server         : localhost_3306
  Source Server Type    : MySQL
- Source Server Version : 80041 (8.0.41-0ubuntu0.22.04.1)
+ Source Server Version : 80042 (8.0.42-0ubuntu0.22.04.1)
  Source Host           : localhost:3306
  Source Schema         : library
 
  Target Server Type    : MySQL
- Target Server Version : 80041 (8.0.41-0ubuntu0.22.04.1)
+ Target Server Version : 80042 (8.0.42-0ubuntu0.22.04.1)
  File Encoding         : 65001
 
- Date: 05/05/2025 23:28:53
+ Date: 10/05/2025 20:52:21
 */
 
 SET NAMES utf8mb4;
@@ -43,7 +43,7 @@ INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, 
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (74, '三国演义', '罗贯中', '人民文学出版社', '1522-01-01', '文学', 23, '2025-03-26 00:28:12', '2025-05-03 10:58:24');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (75, '西游记', '吴承恩', '中华书局', '1592-01-01', '文学', 20, '2025-03-26 00:28:12', '2025-05-03 10:58:10');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (77, '百年孤独', '加西亚·马尔克斯', '南海出版公司', '1967-06-01', '文学', 14, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (79, '小王子', '安托万·德·圣-埃克苏佩里', '人民文学出版社', '1943-04-01', '文学', 38, '2025-03-26 00:28:12', '2025-05-05 02:20:27');
+INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (79, '小王子', '安托万·德·圣-埃克苏佩里', '人民文学出版社', '1943-04-01', '文学', 38, '2025-03-26 00:28:12', '2025-05-10 20:51:09');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (81, '傲慢与偏见', '简·奥斯汀', '译林出版社', '1813-01-01', '文学', 12, '2025-03-26 00:28:12', '2025-05-03 22:23:44');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (95, '存在与时间', '马丁·海德格尔', '商务印书馆', '1927-01-01', '哲学', 10, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (96, '时间简史', '史蒂芬·霍金', '湖南科学技术出版社', '1988-04-01', '科学', 19, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
@@ -54,7 +54,6 @@ INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, 
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (101, '影响力', '罗伯特·西奥迪尼', '中国财政经济出版社', '1984-01-01', '心理学', 20, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (102, '社会性动物', '艾略特·阿伦森', '华东师范大学出版社', '1972-01-01', '心理学', 18, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
 INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (103, '乔布斯传', '沃尔特·艾萨克森', '中信出版社', '2011-10-01', '传记', 25, '2025-03-26 00:28:12', '2025-05-02 23:37:27');
-INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `category`, `stock`, `create_time`, `update_time`) VALUES (109, 'dada', 'www', 'dadad', '2025-05-01', 'dadad', 0, '2025-05-05 01:56:14', '2025-05-05 02:22:31');
 COMMIT;
 
 -- ----------------------------
@@ -76,7 +75,7 @@ CREATE TABLE `borrow_record` (
   KEY `idx_user_id` (`user_id`) USING BTREE,
   KEY `idx_book_id` (`book_id`) USING BTREE,
   KEY `idx_status` (`status`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='图书借阅记录表';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='图书借阅记录表';
 
 -- ----------------------------
 -- Records of borrow_record
@@ -93,8 +92,7 @@ INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_t
 INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (9, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 74, '2025-05-01 00:00:00', '2025-05-11 00:00:00', NULL, 1, '2025-05-03 20:49:09', '2025-05-03 20:49:09', 0);
 INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (10, '189f4fa2-9d1c-456b-83d4-0b4f6c89ba1e', 77, '2025-04-30 00:00:00', '2025-05-10 00:00:00', NULL, 1, '2025-05-03 20:56:38', '2025-05-03 20:56:38', 0);
 INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (11, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 81, '2025-04-29 00:00:00', '2025-05-10 00:00:00', '2025-05-03 22:23:44', 2, '2025-05-03 22:23:23', '2025-05-03 22:23:23', 0);
-INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (12, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 109, '2025-04-28 00:00:00', '2025-05-01 00:00:00', '2025-05-05 02:22:31', 3, '2025-05-05 02:21:47', '2025-05-05 02:21:47', 0);
-INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (13, '6129d161-f38b-4022-9440-da07134df815', 109, '2025-05-11 00:00:00', '2025-05-11 00:00:00', NULL, 1, '2025-05-05 22:14:18', '2025-05-05 22:14:18', 0);
+INSERT INTO `borrow_record` (`borrow_record_id`, `user_id`, `book_id`, `borrow_time`, `expect_return_time`, `actual_return_time`, `status`, `create_time`, `update_time`, `is_deleted`) VALUES (14, 'e5fbd029-b4b0-4f12-8679-510ef9695be3', 79, '2025-05-01 00:00:00', '2025-05-07 00:00:00', '2025-05-10 20:51:09', 3, '2025-05-10 20:50:50', '2025-05-10 20:50:50', 0);
 COMMIT;
 
 -- ----------------------------
@@ -111,7 +109,7 @@ CREATE TABLE `log` (
   `params` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci COMMENT '请求参数',
   `create_time` datetime DEFAULT NULL COMMENT '日志的时间',
   PRIMARY KEY (`log_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=525 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=884 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of log
@@ -222,7 +220,7 @@ BEGIN;
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('1888dee2-c173-48e0-ac2c-e5a043dec7d4', 'admin', '系统管理员', '9c91e85e5f8f26f3e4002d839cfcfcbc', 'b581e52d-8e35-4390-abbf-1968403af525', '12345678', '12345678', 1, '2024-03-06 16:03:25');
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('189f4fa2-9d1c-456b-83d4-0b4f6c89ba1e', 'shanghai123', '123', '97446b776d94c3b907c59bbc224e5a30', '40f9c810-15a9-40cf-a604-68bd219ac15e', '123456', '123456', 1, '2024-06-14 14:02:48');
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('554c9e86-e577-4bfb-891d-45fd14723e1a', 'maintain', '维护人员', 'ccdf5ef6227ca812583fd8b58e8e29de', '450fba82-a565-47f2-a2c5-26d3f6ebb13a', '12345678', '123456789', 1, '2024-06-06 12:37:57');
-INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('6129d161-f38b-4022-9440-da07134df815', 'test', 'test', '46329ea869014d3e781b579854e3e381', 'a1d449b9-d141-4b69-9353-0a593f059695', '11111111111111111', '1111111111111111111', 1, '2025-05-05 22:13:55');
+INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('6129d161-f38b-4022-9440-da07134df815', 'test', 'test', 'd40f4a4fb0e2e9dad843d1a4ef1c9b2e', '79f3aece-54b7-4a79-b4e2-68311aef8fbe', '11111111111111111', '1111111111111111111', 1, '2025-05-05 22:13:55');
 INSERT INTO `user_info` (`user_id`, `user_name`, `name`, `pass_word`, `salt`, `phone`, `email`, `status`, `created_time`) VALUES ('e5fbd029-b4b0-4f12-8679-510ef9695be3', 'user', '用户', '17d5e423900efcd06d1997eca49642a5', '2a874930-a0d0-4fe3-9772-a1e1ebf02656', '12345678', '1111', 1, '2024-06-06 12:38:35');
 COMMIT;
 

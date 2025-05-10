@@ -18,7 +18,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-        System.out.println("JwtFilter -----> preHandle() 方法执行");
+        // System.out.println("JwtFilter -----> preHandle() 方法执行");
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         res.setHeader("Access-control-Allow-Origin", req.getHeader("Origin"));
@@ -40,7 +40,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        System.out.println("JwtFilter -----> isAccessAllowed() 方法执行");
+        // System.out.println("JwtFilter -----> isAccessAllowed() 方法执行");
         /**
          * 先去调用 isLoginAttempt方法 字面意思就是是否尝试登陆 如果为true
          * 执行executeLogin方法
@@ -79,7 +79,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean executeLogin(ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
         String token = req.getHeader("AUTH_TOKEN");
-        System.out.println("AUTH_TOKEN" + token);
+        // System.out.println("AUTH_TOKEN" + token);
         JwtToken jwtToken = new JwtToken(token);
         // 然后交给自定义的realm对象去登陆, 如果错误他会抛出异常并且捕获
         getSubject(request, response).login(jwtToken);
