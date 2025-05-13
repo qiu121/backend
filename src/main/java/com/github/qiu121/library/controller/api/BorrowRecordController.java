@@ -127,4 +127,52 @@ public class BorrowRecordController {
         response.setMsg("归还成功");
         return response;
     }
+
+    /**
+     * 删除借阅记录
+     *
+     * @param borrowRecordId 借阅记录ID
+     * @return
+     */
+    @DeleteMapping("/removeBorrowRecord")
+    @RequiresRoles("admin")
+    public SuccessResponse removeBorrowRecord(Integer borrowRecordId) {
+        SuccessResponse response = new SuccessResponse(200);
+        response.setMsg("删除成功");
+
+        boolean success = borrowRecordService.removeById(borrowRecordId);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("success", success);
+        if (!success) {
+            response.setMsg("删除失败");
+            response.setCode(0);
+        }
+        response.setData(map);
+        return response;
+
+    }
+
+    /**
+     * 批量删除借阅记录
+     *
+     * @param borrowRecordIdList 借阅记录ID列表
+     * @return
+     */
+    @DeleteMapping("/batchRemoveBorrowRecord")
+    @RequiresRoles("admin")
+    public SuccessResponse batchRemoveBorrowRecord(@RequestBody List<Integer> borrowRecordIdList) {
+        SuccessResponse response = new SuccessResponse(200);
+        response.setMsg("删除成功");
+
+        boolean success = borrowRecordService.removeByIds(borrowRecordIdList);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("success", success);
+        if (!success) {
+            response.setMsg("删除失败");
+            response.setCode(0);
+        }
+        response.setData(map);
+        return response;
+    }
+
 }
